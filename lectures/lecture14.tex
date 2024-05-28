@@ -1,0 +1,61 @@
+\chapter{Applications of Talagrand's Inequality}
+\section{Steiner tree on the Euclidean plane}
+Consider $n$ points $\ov x = (x_1, \dots, x_n)$, such that $x_i \in [0,1]^2$ are independent. 
+\begin{definition}[Steiner tree]
+Steiner tree of the collection $\ov x$ is a tree that contains as vertices all points in $\ov x$.
+\end{definition}
+\begin{note}
+We can add extra vertices in the Steiner tree construction.
+\end{note}
+\newcommand{\mst}{\text{mst}}
+Let $\text{mst}(\ov x)$ be the minimum length Steiner tree containing $\ov x$ (i.e., sum of edge lengths of the edge in the tree).
+\begin{prop}
+\[
+\mst(\ov x) \leq \mst(\ov y) + d_{\ov\beta}(\ov x, \ov y)
+\]
+for $\ov x, \ov y \in [0,1]^2 \times \dots \times [0,1]^2$ and $\ov\beta (\ov x)$ appropriately defined.
+\end{prop}
+\begin{proof}
+Let $T(\ov x)$ be a TSP tour (recall from previous lectures). We had defined $\beta_k = |e_{k,1}| + |e_{k,2}|$ for edges corresponding to the TSP tour over $\ov x$. 
+Let $S(\ov y)$ be a steiner tree containing all points in $\ov y$. Let $E = \text{edges}(S(\ov y)) \cup \text{edges in $T(\ov x)$ such that at lest one end point lies in $\ov x\setminus \ov y$}$.
+\begin{itemize}
+    \item[\circled{1}] $\mst(\ov x) \leq $ sum of length of edges in $E$. \\
+    \textit{Reason:} edges in $E$ are a connected component and cover all vertices in $\ov x$. Thus, this is an upper bound on $\mst(\ov x)$.
+    \item[\circled{2}] sum of length of edges in $E \leq \mst(\ov y) + d_{\ov\beta}(\ov x, \ov y)$\\
+    \textit{Reason:} Imagine the images in slides, and notice that we don't need to traverse the dangling edges twice, but we can do so to upper bound.
+\end{itemize}
+\end{proof}
+
+\section{Random minimum spanning tree}
+\begin{note}
+This is not in Euclidean space.
+\end{note}
+Let $K_n$ be the complete graph with $n$ vertices. We have $|E| = N = \binom n2$. Each edge $e \in E$ has a length denoted by $Y_e \sim \Ucal(0,1)$. Let $\mst(\ov x)$ be the length of the minimum spanning tree, where $\ov x$ is a vector of all $N$ edge lengths.
+\begin{align*}
+    \PP(\text{shortest edge} > b) &= \PP(\text{all $n-1$ edges $> b$}) = (1-b)^{n-1} \\
+    \EE[\text{shortest edge out of a node}] &= \int_0^1 (1-b)^{n-1} db = \frac{1}{n}
+\end{align*}
+\begin{remark}
+In fact (stated without proof - check proof in~\cite{mcdiarmid1998concentration}):
+\[
+\lim_{n\to\infty} \mst(\ov x) \longrightarrow \sum_{j=1}^{\infty} \frac{1}{j^3} \approx 1.202 = \gamma
+\]
+\end{remark}
+\begin{theorem}
+$\forall t > 0$, $\exists \delta (t) > 0$ such that,
+\begin{equation}
+    \PP(|\mst(\ov x) - \gamma| \geq t) \leq \exp(-\delta (t) n)
+\end{equation}
+\end{theorem}
+\begin{proof}(\textit{Approach})
+\begin{itemize}
+    \item[1:] Replace $Y_e \to X_e=\min\{Y_e, b\}$ for any fixed $b \in (0,1)$. Let $L_n^{(b)} = \mst(\ov X)$ and $L_n = \mst(\ov Y)$. We will show that $L_n$ and $L_n^{(n)}$ are close for $b = c/n$.\\
+    \textit{Intuition:} long edges are not a part of the mst, so clipping them does not change the function value too much.
+    \item[2:] For the system $L_n^{(b)}$, we have
+    \[
+    \mst(\ov p) \leq \mst(\ov q) + b\sqrt{n}d_{\ov\alpha}(\ov p,\ov q)
+    \]
+    for some $\ov\alpha(\ov q)$ due to Talagrand's inequality. Thus it follows that $L_n^{(b)}$ concentrates around its median.
+    \item[3:] Mean and median are close.
+\end{itemize}
+\end{proof}

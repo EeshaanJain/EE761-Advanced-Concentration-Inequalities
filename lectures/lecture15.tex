@@ -1,0 +1,106 @@
+\chapter{Random Minimum Spanning Tree}
+\newcommand{\mst}{\text{mst}}
+\section{Steps of the proof}
+\textbf{Step 1:} Let $X_e = \min\{Y_e, b\}$ for a fixed $b$.
+\begin{prop}
+$\forall t > 0$, $\exists c_1 > 0, \nu > 0$ such that for $b = c_1 / n$,
+\[
+\PP(L_n - L_n^{(b)} \geq t) \leq e^{-\nu(t) n}
+\]
+\end{prop}
+\begin{proof}
+Omitted.
+\end{proof}
+\textbf{Step 2:} Let $\Omega = (0,b)^N$, $\ov p \in \Omega$, $\ov q \in \Omega$. Let $E(\ov p)$ be the set of edges corresponding to a minimum weight spanning tree of $\ov p$. Let $\ov \beta = (\beta_1, \dots, \beta_N)$ with $\beta_i = b$ if $i \in E(\ov p)$ and $0$ else. Note that since the tree has $n-1$ edges, $\|\beta\|_2 = b\sqrt{n-1}$. Let $\ov \alpha = \ov \beta / b\sqrt{n-1}$ be a unit-norm vector. \\
+For any $\ov q \in \Omega$, 
+\begin{align*}
+\mst(\ov q) &\leq \sum_{i=1 \in E(\ov p)} q_i   = \sum_{i \in E(\ov p)} p_i + q_i - p_i \\
+&\leq \sum_{i \in E(\ov p)} p_i + \sum_{i \in E(\ov p)} [q_i - p_i]_+ \\
+&\leq \sum_{i \in E(\ov p)} p_i + b \bm{1}_{\{q_i \neq p_i\}} \\
+&= \mst(\ov p) + d_{\ov \beta}(\ov p, \ov q)
+\end{align*}
+The last statement holds because
+\[
+d_{\ov\beta}(\ov p, \ov q) = \sum_{i \in [N]} \beta_i \bm1_{\{p_i \neq q_i\}} = \sum_{i \in E(\ov p)} b \bm 1_{\{p_i \neq q_i\}} + \sum_{i \notin E(\ov p)} 0 \bm {1}_{\{p_i \neq q_i\}} 
+\]
+Thus, we finally can get
+\[
+\mst(\ov q) \leq \mst(\ov p) + b \sqrt{n} d_{\ov \alpha}(\ov x, \ov y)
+\]
+Applying Talagrand's inequality,
+\[
+\PP(|\mst(\ov X) - m|\geq t) \leq 4\exp\left(-\frac{t^2}{4b^2n}\right)
+\]
+where $\ov X$ is the truncated version of $\ov Y$. We connect this to the $\ov Y$ universe:
+\begin{align*}
+\PP(|\mst(\ov Y) - m| \geq 2t) &= \PP(\underbrace{\mst(\ov Y) - \mst(\ov X)}_{R} + \underbrace{\mst(\ov X) - m}_{S}| \geq 2t) \\
+&= \PP(|R + S| \geq 2t) = \PP(|R+S| \geq 2t, |S| \geq t) + \PP(|R+S| \geq 2t, |S| < t) \\
+&\leq \PP(|S| \geq t) + \PP(|R| \geq t) \\
+&\leq e^{-\nu(t) n} + 4\exp\left(-\frac{t^2 n}{4c_1^2}\right) \qquad \text{(substitute $b = c_1/n$)}
+\end{align*}
+\textbf{Step 3:} We will now show that $|\EE[L_n] - m|$ is small. We have $|\EE[L_n] - m| \leq \EE[|L_n - m|]$. Further,
+\begin{align*}
+RHS = &\underbrace{\EE\left[|L_n - m| | |L_n-m| \leq \frac t4\right] }_{\leq t/4}\underbrace{\PP\left(|L_n-m| \leq \frac t4 \right)}_{1}\\ +  &\underbrace{\EE\left[|L_n - m| | |L_n-m| > \frac t4\right]}_{\leq n-1} \underbrace{\PP\left(|L_n-m| > \frac t4\right)}_{\text{Step 2}} \\
+\leq &\frac{t}{4} + (n-1)e^{-\delta_1 n}
+\end{align*}
+where $\delta_1$ can be computed from \textbf{Step 2}. Thus median concentration + mean-median close implies mean concentration.
+\begin{remark}
+The proof of Talagrand's Inequality is still pending.
+\end{remark}
+\section{Variance Bounds}
+\subsection{ Log-Sobolev Inequalities and Efron-Stein}
+The goal here is to find bounds on the variance of several independent random variables. This leads to Log-Sobolev inequalities. This is a precursor to Efron-Stein. 
+\begin{theorem}\label{thm:efron-stein-precursor}
+Let $Z = f(X_1, \dots, X_n)$ where $X_i$ are independent and belong to the same alphabet. Then
+\begin{equation}
+    \text{var}(Z) \leq \sum_{i=1}^n \EE[(Z- \EE_i[Z])^2]
+\end{equation}
+where $\EE_i[Z] = \EE[Z | X_1, \dots, X_{i-1}, X_{i+1}, \dots, X_n] = \EE\left[Z | X_{\setminus i}^{(n)}\right]$.
+\end{theorem}
+\begin{proof}
+To be done later.
+\end{proof}
+\begin{theorem}[Efron-Stein inequality]
+Let $X_i'$ be an independent copy of $X_i$. Then,
+\begin{equation}
+    \text{var}(Z) \leq \frac{1}{2} \sum_{i=1}^n \EE[(Z - Z_i')^2]
+\end{equation}
+where $Z_i' = f(X_1, \dots, X_{i-1}, X_i', X_{i+1}, \dots, X_n)$
+\end{theorem}
+\begin{note}
+\textit{Intuition:} For $n = 1$, $\text{var}(Z) \leq \frac12 \EE[(f(X_1) - f(X_i'))^2]$. We have
+\begin{align*}
+    RHS &= \frac{1}{2} (\EE[(f(X_1))^2] + \EE[(f(X_1'))^2] - 2\EE[f(X_1)f(X_1')] \\
+    &= \EE[(f(X_1))^2] - \EE[f(X_1)]^2 &= \text{var}(Z)
+\end{align*}
+Hence, in 1-dimension, equality holds. This infact, is a fancy way to say
+\[
+\text{var}(X) = \EE[(X-Y)^2] \text{ where $Y$ is independent copy of $X$}
+\]
+\end{note}
+\begin{eg}
+If $f(\bullet)$ satisfies the BDC, i.e.,
+\[
+|f(x_1, \dots, x_i,\dots, x_n) - f(x_1, \dots, x_i', \dots x_n) |\leq c_i
+\]
+ for all $x_1, \dots, x_n, x_i'$, then
+ \[
+ \text{var}(f(\bullet)) \leq \frac{1}{2} \sum_{i=1}^n c_i^2
+ \]
+\end{eg}
+Now we prove the precursor.
+\begin{proof}[Of the precursor]
+Let $V = Z - \EE[Z]$, $V_i = \EE[Z|X_1, \dots, X_i] - \EE[Z | X_1, \dots, X_{i-1}]$ for $i = 1, \dots n$. Note that $V = \sum_{i=1}^n V_i$. We have
+\begin{align*}
+    \text{var}(Z) &= \EE[(Z - \EE[Z])^2] = \EE[V^2] \\
+    &= \EE\left[\left(\sum_{i=1}^n V_i^2\right)\right] + 2\EE\left[\sum_{(i,j), i > j} V_i V_j\right]
+\end{align*}
+Focus on $\EE[V_iV_j]$ for $i > j$.
+\begin{align*}
+\EE[V_i V_j] &= \EE[\EE[V_iV_j | X_1, \dots X_j]] \\
+&= \EE[V_j \EE[V_i | X_1, \dots, X_j]] \\
+&= \EE[V_j (\EE[\EE[Z | X_1, \dots, X_i] | X_1,\dots X_j]  - \EE[\EE[Z | X_1,\dots, X_{i-1}] | X_1,\dots X_j])] \\
+&= \EE[V_j (\EE[Z|X_1,\dots, X_j] - \EE[Z | X_1,\dots, X_j])] = 0
+\end{align*}
+Thus, $\text{var}(Z) = \EE[\sum_i V_i^2]$.
+\end{proof}

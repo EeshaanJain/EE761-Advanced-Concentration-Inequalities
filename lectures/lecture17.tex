@@ -1,0 +1,64 @@
+\chapter{More on Efron-Stein}
+\begin{remark}
+Say we have a random variable $X$ and a constant $a$, then
+\[
+\EE[(X- \EE[X])^2] \leq \EE[(X-a)^2]
+\]
+More generally, if we have random variables $X, Y$, then for any function $h(Y)$, 
+\[\EE[(X - \EE[X|Y])^2 | Y] \leq \EE[(X - h(Y))^2 | Y]\]
+\end{remark}
+
+From Theorem~\ref{thm:efron-stein-precursor}, and above, we can write
+\begin{align*}
+    \text{var}(Z) &\leq \sum_{i=1}^n \EE\left[\EE_i\left[(Z - \EE_i[Z])^2\right]\right] \\ 
+    &\leq \sum_{i=1}^n \EE\left[\EE_i\left[(Z - Z_i)^2\right]\right]  = \sum_{i=1}^n \EE[(Z - Z_i)^2]
+\end{align*}
+where $Z_i$ is some function of $X_1, \dots, X_{i-1}, X_{i+1}, \dots, X_n$ to be defined. Let $Z_i = g_i(X_1, \dots, X_{i-1}, X_{i+1}, \dots, X_n)$ (i.e., $i^{th}$ coordinate skipped). Note that this is similar to Efron-Stein in the way that this doesn't have the $1/2$ factor, $g \leftrightarrow g_i$, and this has $Z_i$ instead of $Z_i'$ which has a coordinate skipped instead of replaced. To summarize, $Z_i = g_i(X_1, \dots, X_{i-1}, X_{i+1}, \dots, X_n)$ and $Z_i' = g(X_1, \dots, X_{i-1}, X_i', X_{i+1}, \dots, X_n)$.
+\begin{definition}[Self-bounding functions]
+A function $g: \Xcal^n \to \RR$ is a self-bounding if $g(\bullet) \geq 0$, and $\exists \{g_1, i=1,\dots, n\}$ such that 
+\begin{itemize}
+    \item[\circled{1}] $0 \leq g(x_1, \dots, x_n) - g_i(x_1, \dots, x_{i-1}, x_{i+1}, \dots, x_n) \leq 1$ 
+    \item[\circled{2}] 
+    \[
+    \sum_{i=1}^n \left(g(x_1, \dots, x_n) - g_i(x_1,\dots,x_{i-1},x_{i+1},\dots,x_n)\right) \leq g(x_1, \dots, x_n)
+    \]
+\end{itemize}
+\end{definition}
+\begin{corollary}[Of Efron-Stein]
+Let $Z = g(X_1, \dots, X_n)$ where $g$ is a self-bounding function. Then, $\text{var}(Z) \leq \EE[Z]$.
+\end{corollary}
+\begin{proof}
+We have $\text{var}(Z) \leq \sum_i \EE[(Z - Z_i)^2]$. We also have $0 \leq Z -Z_i \leq 1$ and $\sum_{i=1}^n 0 (Z-Z_i) \leq Z$. Since $0\leq Z-Z_i\leq 1$, we also have $0 \leq (Z - Z_i)^2 \leq 1$. Thus, $(Z - Z_i)^2 \leq (Z-Z_i)$ and we can take sum + expectation and use the above two properties to conclude
+\[
+\text{var}(Z) \leq \sum_{i=1}^n \EE[(Z - Z_i)^2] \leq \sum_{i=1}^n \EE[Z-Z_i] \leq \EE[Z]
+\]
+\end{proof}
+\begin{definition}[Hereditary property $\Pcal$]
+$\Pcal$ is defined over $\Xcal^n$ as follows:
+\begin{itemize}
+    \item[\circled{1}] $\Pcal = \{\Pcal_1, \dots, \Pcal_n\}$ is a sequence of sets with $\Pcal_k \subseteq \Xcal^k$, $k = 1, \dots, n$
+    \item[\circled{2}] $(x_1, \dots, x_m) \in \Pcal_m \implies$ any subsequence $(x_{i_1}, \dots, x_{i_\ell}) \in \Pcal_\ell$ for any $\ell \leq m$ and for any $m = 1, \dots, n$.
+\end{itemize}
+\end{definition}
+\begin{eg}
+An example of heriditary property is distinctness. We have $\Pcal_{\text{distinctness}} = \{\Pcal_1, \dots, \Pcal_n\}$. We have $\Pcal_1$ as unique 1 length strings, which is $\Xcal$. Now, $\Pcal_2 = \{(x_1, \dots, x_2) \in \Xcal^2: x_1\neq x_2\}$. Similarly, $\Pcal_3 = \{(x_1,x_2,x_3) \in \Xcal^3 : x_1\neq x_2\neq x_3\neq x_1\}$. We see that $\circled{2}$ holds for this as any subsequence of distinct characters consists distinct characters.
+\end{eg}
+\begin{eg}
+\textit{Increasingness} is also hereditary. We have $\Pcal_1 = \Xcal$, and $\Pcal_2 = \{(x_1, x_2) \in \Xcal^2 : x_1 < x_2\}$, and so on. This gives us existence of sets, and then \circled{2} holds as subsequence of increasing elements is increasing.
+\end{eg}
+\begin{definition}[Configuration functions]
+Given a sequence $(x_1, \dots, x_n) \in \Xcal^n$, the configuration function w.r.t. a hereditary property $\Pcal$ is the cardinality of the longest subsequence of $\overline{x}$ in $\Pcal$.
+\end{definition}
+\begin{eg}
+Consider $\Xcal = \{1,\dots,9\}$ and let the sequence be $(1, 2, 1, 3, 4, 5)$. If our property is increasingness, we see that nothing lies in $\Pcal_6$, and we have one subsequence in $\Pcal_5$. Hence the cardinality is 5.
+\end{eg}
+\begin{prop}
+Configuration functions are self-bounding. 
+\end{prop}
+\begin{proof}
+Let $Z = g^{(n)}(X_1, \dots, X_n)$. Here the superscript denotes the number of arguments. We have $Z_i = g^{(n-1)}(X_1, \dots, X_{i-1}, X_{i+1}, \dots, X_n)$ where $g$ corresponds to the property (\textit{increasingness} for example) Thus $g^{(n-1)}$ is the same configuration function over $(n-1)$ length sequences. $Z_i$ is the lenfth of the longest sequence associated with $\Pcal$ with input $(X_1, \dots, X_{i-1}, X_{i+1}, \dots, X_n)$. We need to show that $0 \leq Z - Z_i \leq 1$. This is easy to see as the left inequality follows from hereditary property, and right inequality follows as the function value can go down by atmost 1 when the sequence length decreases by 1. Now, recall $Z = g^{(n)}(X_1, \dots, X_n)$. $Z = k \implies \exists \{x_{i_1}, \dots, x_{i_k}\}$ such that $g^{(k)}(X_{i_1}, \dots, X_{i_k}) = 1$. If $ i \notin \{i_1, \dots, i_k$, then we have that $g^{(n)}(X_1, \dots, X_{i-1}, X_{i+1}, \dots, X_n) = k$. Thus,
+\[
+\sum_{i=1}^n (Z - Z_i) = \sum_{i \in \{i_1, \dots, i_k\}} (Z - Z_i) \leq k = Z
+\]
+The $\leq$ came and not $=$ as there might be more than $1$ index sets.
+\end{proof}

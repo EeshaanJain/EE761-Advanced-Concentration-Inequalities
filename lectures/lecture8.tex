@@ -1,0 +1,106 @@
+\chapter{Continuing on Martingales}
+
+\begin{prop}
+BDC + Indepdendence $\implies$ ALC.    
+\end{prop}
+\begin{proof}
+Notation: $\overline{*}_i = \{*\}_{k\leq i}$, and $\overline{*}^i = \{*\}_{k > i}$. 
+\begin{align*}
+\EE[Z | \ov{X}_{i-1}, X_i = a] &= \sum_{\ov{a}^{i+1}} \EE[Z | \ov{X}_{i-1}, X_i=a, \ov{X}^{i+1}=\ov a^{i+1}] \PP(\ov{X}^{i+1} = \ov{a}^{i+1} | \ov{X}_{i-1}, X_i=a) \\
+&= \sum_{\ov{a}^{i+1}} \EE[Z | \ov{X}_{i-1}, X_i=a, \ov{X}^{i+1}=\ov a^{i+1}] \PP(\ov{X}^{i+1} = \ov{a}^{i+1}) \text{ $\because$ $X_i$'s are $\bot$} \\
+&=  \sum_{\ov{a}^{i+1}} f(\ov{X}_{i-1}, a, \ov{a}^{i+1}) \PP(\ov{X}^{i+1} = \ov{a}^{i+1})
+\end{align*}
+Hence, we can write, $\Delta=\left|\EE[Z|\ov{X}_{i-1},X_i=a] - \EE[Z|\ov{X}_{i-1},X_i=a']\right|$
+\begin{align*}
+\Delta&=\left|\sum_{\ov{a}^{i+1}} \left[f(\ov{X}_{i-1}, a, \ov{a}^{i+1}) - f(\ov{X}_{i-1}, a', \ov{a}^{i+1})\right] \PP(\ov{X}^{i+1} = \ov{a}^{i+1})\right| \\
+&\leq \sum_{\ov{a}^{i+1}} \left|f(\ov{X}_{i-1}, a, \ov{a}^{i+1}) - f(\ov{X}_{i-1}, a', \ov{a}^{i+1})  \right| \PP(\ov{X}^{i+1} = \ov{a}^{i+1}) \\
+&\leq d_i \sum_{\ov{a}^{i+1}}\PP(\ov{X}^{i+1} = \ov{a}^{i+1}) = d_i
+\end{align*}
+Hence, in summary: BDC + $\bot \implies $ ALC $\implies$ BMDC $\implies$ Azuma-Hoeffding
+\end{proof}
+\begin{theorem}[McDiarmid's Inequality]
+If all $X_i$'s are $\bot$ for $i \in [n]$, and $f$ satisfies the BDC, then,
+\begin{equation}
+\begin{split}
+    &\PP(Z > \EE[Z] + t) \\ 
+    &\PP(Z < \EE[Z]-t)
+\end{split}
+\leq \exp\left(\frac{-2t^2}{\sum_{i=1}^nd_i}\right)
+\end{equation}
+\end{theorem}
+\begin{eg}
+We define the chromatic number $\chi$ of a graph as the minimum number of colors to color all vertices of a graph such that no two neighboring vertices have the same color. An Erdos-Reyni random graph $G_{n,p}$ is a graph with $n$ vertices and $\PP(\text{edge between }v_i\text{ and } v_j) = p$ indepdendent of all other edges. \\
+Let $\chi$ be a function $f$ of the $n(n-1)/2$ potential edges. Let us modify an edge (add or delete). Then,
+\begin{lemma}
+Modification of an edge changes the chromatic number atmost by one.
+\end{lemma}
+\begin{proof}
+By adding an edge, we can just use a new color and that changes the chromatic number by atmost 1. For deletion, consider the same argument for the graph without that edge and add the edge to it. Hence,
+\[
+\left|f(e_1, \dots, e_i, \dots, e_{\binom n2}) - f(e_1, \dots, e_i', \dots, e_{\binom n2})\right| \leq 1 
+\]
+\end{proof}
+Hence, by Mcdiarmid's inequality,
+\[
+\PP(\chi - \EE[\chi] \geq t) \leq \exp\left(\frac{-2t^2}{\binom n2}\right)
+\]
+But here the denominator has $n^2$, which makes bound loose. We can do better:
+Let $E_i$ be the set of edges from $v_i$ to $\{v_1, \dots, v_{i-1}\}$, and thus $E_i$'s are independent by definition, and we only have $n$ sets. We have
+\[
+\left|f(e_1, \dots, e_i, \dots, e_n) - f(e_1, \dots, e_i', \dots, e_n)\right| \leq 1
+\]
+since the new vertex can just use a different color (note that the older vertices colors are fixed). Thus, we have
+\[
+\PP(\chi - \EE[\chi] \geq t) \leq \exp\left(-\frac{2t^2}{n}\right)
+\]
+(Note: infact we can just put n-1 as $E_0$ is an $\emptyset$).
+\end{eg}
+\begin{eg}[Stochastic bin-packing]
+Say we have $n$ objects which are indivisible which have a scalar attribute $\in [0,1]$. Say we have infinite bins, each with capacity 1. We need to find the fewest number of bins required to pack the $n$ objects.\\ Let $X_i$ be the size of item $i$ be independent and $\sim U[0,1]$, and $B_n = f(X_1, \dots, X_n)$ be the number of bins needed to pack the $n$ objects. Then clearly,
+\[
+|f(x_1, \dots, x_i, \dots, x_n) - f(x_1, \dots, x_i', \dots, x_n) \leq 1
+\]
+Hence, 
+\[
+\PP(B_n - \EE[B_n] > t) \leq \exp\left(-\frac{2t^2}{n}\right)
+\]
+\end{eg}
+\begin{eg}[Symmetric $n$-ball, $n$-bin setting]
+Say we want to comment on the number of bins with an even number of balls. Let $X_i$ be the bin number of the bin ball $i$ lands in. We can see that $X_i$'s are independent. Then,
+\[
+|f(x_1, \dots, x_i, \dots, x_n) - f(x_1, \dots, x_i', \dots, x_n)| \leq 2
+\]
+(we can see this as in the worst case we take a ball from a bin with odd number of balls and drop it in a bin with odd number of balls $\implies$ both become even. Hence,
+Hence, 
+\[
+\PP(B_n - \EE[B_n] > t) \leq \exp\left(-\frac{2t^2}{4n}\right)
+\]
+\end{eg}
+\begin{eg}[Traveling salesman problem]
+Given a list of cities and the distances between all pairs, what is the shortest route that visits each city exactly once and returns to the origin city. We look at a simpler version:\\
+Say the problem is 2-dimensional in euclidean space, and stochastic. Define $P_i := (X_i, Y_i)$ for $i \in [n]$, and $X_i, Y_i$ are chosen uniformly at random in $[0,1]^2$ independently across $i$'s. Let $T_n(P_i, i \in [n])$ be the length of the shortest tour. We can show that $\EE[T_n] = \beta\sqrt{n}$. 
+\[
+|T_n(p_i, \dots, p_i, \dots, p_n) - T_n(p_1, \dots, p_i', \dots p_n)| \leq 2\sqrt{2}
+\]
+(In the worst case, though the tour is no longer optimal, you just go to the new point and come back -- and the worst case is when it is on the diagonal corners, hence $2 \times \sqrt{2}$). We can write,
+\[
+\PP(T_n - \EE[T_n] > t)\leq \exp\left(-\frac{2t^2}{8n}\right) = \exp\left(-\frac{t^2}{4n}\right)
+\]
+Since we know $\EE[T_n] = \beta\sqrt{n}$, for $t = \epsilon{\sqrt{n}}$, we get a $\Theta(1)$ bound.
+\end{eg}
+\begin{eg}[Traveling salesman problem (take 2)]
+Now we look at the same problem from a BMDC standpoint. We need to show that $\exists c_{n,k}$ such that
+\[
+|\EE[T_n | P_1, \dots, P_k] - \EE[T_n | P_1, \dots, P_{k-1}]| \leq c_{n,k} \text{ for }k=1,\dots,n
+\]
+\begin{lemma}\label{lemma:shortest-tour}
+Let $T_n(i)$ be the short tour for $\{P_1, \dots, P_{i-1}, P_{i+1}, \dots, P_n\}$. Then,
+\[
+T_n(i) \leq T_n \leq T_n(i) + 2z_i
+\]
+where $z_i = \min_{j > i} d(P_i, P_j)$
+\end{lemma}
+\begin{proof}
+For the first part, it is clear as we are visiting lesser points. For the second part, we know there exists tour with length $T_n(i) + 2z_i$ (as we go to $P_i$ and come back). Then the optimal tour is shorter.
+\end{proof}
+\end{eg}

@@ -1,0 +1,113 @@
+\chapter{Continuing the blowing-up lemma}
+We continue the proof from before.
+\begin{proof}
+The outline is that we use McDiarmid's inequality, and do variable changes. \\
+Let $\rho = \PP(\ov{X} \in A)$ and $\mu = \EE[d_H(\ov{X}, A)]$. Define $f(X_1, \dots, X_n) = d_H(\ov{X}, A)$, and $f(\cdot)$ satisfies the BDC with $d_i = 1$ $\forall i$ (recall that $X_i$'s are independent). The lower tail of McDiarmid gives,
+\[
+\PP(d_H(\ov{X}, A) - \mu \leq -t) \leq \exp\left(-\frac{2t^2}{n}\right) \qquad \cdots \qquad\circled{1}
+\]
+Substituting $t = \mu$ implies that $\PP(d_H(\ov{X}, A) \leq 0) \leq \exp(-2\mu^2 / n)$, but this probability is just $\PP(\ov{X} \in A) = \rho$, and thus:
+\[
+\rho \leq \exp\left(-\frac{2\mu^2}{n}\right)
+\]
+Let $t_0$ be such that $\rho = \exp(-2t_0^2 / n)$ which means $\mu \leq t_0$, and $t_0 = \sqrt{\frac{n}{2}\log\frac{1}{\rho}}$. \\
+Taking the upper-tail now gives
+\[
+\PP(d_H(\ov{X}, A) - \mu \geq t) \leq \exp\left(-\frac{2t^2}{n}\right) \qquad \cdots \qquad\circled{2a}
+\]
+Since, $\mu \leq t_0$, we have
+\[
+\PP(d_H(\ov{X}, A) - t_0 \geq t) \leq \exp\left(-\frac{2t^2}{n}\right) \qquad \cdots \qquad\circled{2b}
+\]
+Thus,
+\[
+\PP(d_H(\ov{X}, A) \geq t + t_0) \leq \PP(d_H(\ov{X}, A) \geq t + \mu) \leq \exp\left(-\frac{2t^2}{n}\right) 
+\]
+Let $s = t + t_0$. Then,
+\[
+\PP(d_H(\ov{X}, A) \geq s) \leq \exp\left(-\frac{2(s-t_0)^2}{n}\right) 
+\]
+Case (i): $s \geq 2t_0$, which means that $(s-t_0)^2 \geq s^2/4$. Thus, we get 
+\[
+\PP(d_H(\ov{X}, A) \geq s) \leq \exp\left(-\frac{2(s-t_0)^2}{n}\right) \leq \exp\left(-\frac{2s^2}{4n}\right) = \exp\left(-\frac{s^2}{2n}\right)
+\]
+Case (ii): $s < 2t_0$, which means $e^{-s^2/2n} \geq \rho = \PP(\ov{X} \in A)$. Thus, we have
+\[
+\min\{\PP(\ov{X} \in A), \PP(d_H(\ov{X}, A) \geq S)\} \leq \exp\left(-\frac{s^2}{2n}\right)
+\]
+Case(iii): $s < t_0$: This is trivial as the first term is less than the RHS and probability $\leq 1$. \\
+Thus, finally we have
+\[
+\PP(\ov{X} \in A)\PP(d_H(\ov{X}, A) \geq S) \leq \exp\left(-\frac{s^2}{2n}\right)
+\]
+\end{proof}
+\section{Generalized Blowing-up Lemma}
+\begin{lemma}
+Fix any $\{\alpha_i, i = 1, 2, \dots, n\}$, each $\geq 0$. Let $\ov{\alpha} = (\alpha_1, \dots, \alpha_n)$, with $\|\ov\alpha\| = \sqrt{\left(\sum_{i=1}^n \alpha_i^2\right)}$. Define,
+\[
+\begin{split}
+    d_{\ov\alpha}(\ov x, \ov y) &= \sum_{i=1}^n \alpha_i \bm{1}_\{x_i \neq y_i\} \\ 
+    d_{\ov\alpha}(\ov x, A) &= \min_{\ov y \in A}d_{\ov\alpha}(\ov x, \ov y)
+\end{split}
+\]
+Let $\ov{X} = (X_1, \dots, X_n)$ be independent, and $\ov{\alpha}$ be a non-negative unit norm vector. Then,
+\[
+\PP(\ov{X} \in A) \PP(d_{\ov\alpha} (\ov{X}, A) \geq t) \leq \exp\left(-\frac{t^2}{2}\right)
+\]
+\end{lemma}
+\section{Median Concentration}
+\begin{eg}[Median Concentration]
+Let $f(X_1, \dots, X_n)$ is a function satisfying the BDC with parameters $\{c_1, \dots, c_n\}$, where $X_i$'s are independent. Let $Z = f(X_1, \dots, X_n)$, and $m = \text{median}(Z)$. Thus, $\PP(Z \geq m) \geq 1/2$ and $\PP(Z \leq m) \geq 1/2$. Then,
+\begin{equation}
+    \begin{split}
+        &\PP(Z - m \geq t) \\
+        &\PP(Z - m \leq -t)
+    \end{split}
+    \; \leq 2\exp\left(-\frac{t^2}{2c^2}\right)
+\end{equation}
+where $c = \sqrt{\sum_i c_i^2}$. \\
+We know that $f(\cdot)$ satisfies the BDC with parameters $\{c_i\}$, and thus $|f(\ov x) - f(\ov x')| \leq c_k$ if $\ov x$ and $\ov x'$ differ in $k^\text{th}$ coordinate. Now notice that, we can use the triangle inequality multiple times to transform this $\ov x$ to a generic $\ov y$, and this keeps on getting the weights $c_j$ if the values are different at that coordinate. Thus,
+\[
+|f(\ov x) - f(\ov y)| \leq d_{\ov c} (\ov x, \ov y) \; \forall \ov x, \ov y \quad (*)
+\]
+Let set $S_a = \{\ov y: f(\ov y) \leq a\}$ be the sub-level set of $a$. Let $\ov y \in S_a$, then $f(\ov x) \leq a +d_{\ov c} (\ov x, \ov y)$. This gives us $f(\ov x) \leq a + d_{\ov c} (\ov x, S_a)$ (by taking minimum over $\ov y$). Let $\ov \alpha = \ov c /c$ be the unit vector in the $\ov c$ direction. Thus, $d_{\ov \alpha} (\ov x, S_a) = d_{\ov c} (\ov x, S_a)/c$. 
+\begin{enumerate}[label=(\roman*)]
+    \item Now, we claim that $f(\ov x) - a \geq t  \implies d_{\ov \alpha} (\ov x, S_a) \geq t/c$. To see this,
+\[
+\frac{t}{c} \leq \frac{f(\ov x) - a}{c} \leq \underbrace{\frac{d_{c}(\ov x, S_a)}{c}}_{\text{By }(*)} = d_{\ov \alpha} (\ov x, S_a)
+\]
+From the claim, $if A \implies B$, $\PP(B) \geq \PP(A)$, and hence $\PP(f(\ov x) - a \geq t) \leq \PP(d_{\ov\alpha}(\ov X, S_a) \geq \frac{t}{c})$
+\item We can see $\{\ov x \in S_a\} \iff \{ f(\ov x) \leq a\} \implies \PP(\ov X \in S_a) = \PP(f(\ov X) \leq a)$. From the blowing-up lemma, we have
+\[
+\PP(\ov X \in S_a) \PP\left(d_{\ov \alpha} (\ov X, S_a) \geq \frac tc\right) \leq \exp\left(-\frac{t^2}{2c^2}\right)
+\]
+\end{enumerate}
+From the above two, and the lemma we have
+\[
+\PP(f(\ov X) \leq a) \PP(f(\ov X) \geq a + t) \leq \exp\left(-\frac{t^2}{2c^2}\right)
+\]
+Let $a = m$. Then, $\PP(f(\ov X) \leq m) \geq 1/2$. Thus, 
+\[
+\PP(f(\ov X) -m \geq t) \leq 2 \exp\left(-\frac{t^2}{2c^2}\right)
+\]
+Now, also et $a = m- t$. Then, we have $\PP(f(\ov X) \geq m) \geq 1/2$ again, and get the lower-tail
+\[
+\PP(f(\ov X) -m \leq -t) \leq 2 \exp\left(-\frac{t^2}{2c^2}\right)
+\]
+\end{eg}
+\section{Mean is not far away from Median}
+\begin{lemma}
+Let a random variable $Y$ have mean $\mu$ and median $m$. Let $a, b > 0$. \\
+If $\PP(Y - m \geq t) \leq a e^{-t^2/b} \; \forall t \geq 0$, then,
+\[
+\mu - m \leq \frac{\sqrt{\pi}}{2} a \sqrt b
+\]
+If $\PP(Y - m \leq -t) \leq a e^{-t^2/b} \; \forall t \geq 0$, then,
+\[
+m - \mu \leq \frac{\sqrt{\pi}}{2} a \sqrt b
+\]
+Hence,
+\begin{equation}
+    |\mu - m| \leq \frac{\sqrt\pi}{2} a \sqrt{b}
+\end{equation}
+\end{lemma}

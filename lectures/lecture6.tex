@@ -1,0 +1,82 @@
+\chapter{Introduction to Martingales}
+\section{Introduction}
+Martingales are sequences of random variables, satisfying certain properties. In our case, we will study them to obtain Chernoff-like bounds for general functions of dependent random variables.
+\begin{definition}[Martingales]
+A sequence of random variables $Z_0, Z_1, \dots$ is a martingale with respect to the sequence of random variables $X_0, X_1, X_2, \dots$ if, $\forall n \geq 0$ :
+\begin{enumerate}[label=(\roman*)]
+    \item $Z_n = f(X_0, \dots, X_n)$
+    \item $\EE[|Z_n|] < \infty$
+    \item $\EE[Z_{n+1} | X_0, \dots ,X_n] = Z_n$
+\end{enumerate}
+\end{definition}
+\begin{definition}[Martingales (alternate)]
+A sequence of random variables $Z_0, Z_1, \dots,$ is called a martingale w.r.t. itself (also sometimes called just a martingale), if :
+\begin{enumerate}[label=(\roman*)]
+    \item $\EE[|Z_n|] < \infty$
+    \item $\EE[Z_{n+1} | Z_0, \dots, Z_n] = Z_n$
+\end{enumerate}
+\end{definition}
+\begin{eg}[Pólya's urn]
+Given an urn containing $r$ red balls and $g$ green balls, at each time-step, we pick a ball from the urn chosen uniformly at random, and put back 2 balls of the same color. Let $R_n$ be the number of red balls after the $n^\text{th}$ round. Number of balls in the urn after $n$ rounds is $r + g + n$. The difference equation is:
+\[
+R_{n+1} = \begin{cases}
+    R_n + 1 & \text{w.p. } \frac{R_n}{r+g+n}  \\ R_n &\text{w.p. } 1-\frac{R_n}{r+g+n}
+\end{cases}
+\]
+Now,
+\[
+\EE[R_{n+1} | R_n] = (R_n+1) \frac{R_n}{r+g+n} + R_n\left(1-\frac{R_n}{r+g+n}\right) = R_n\left(\frac{r+g+n+1}{r+g+n}\right)
+\]
+Let $X_n = \frac{R_n}{r+g+n}$ be the fraction of red balls. Then, $\EE[X_n|X_{n-1}, \dots, X_0] = \EE[X_n|X_{n-1}] = X_{n-1}$ (we can see this by dividing both sides by $r+g+n+1$ in the above equation), and thus $X_{n}$ is a martingale.
+\end{eg}
+\begin{lemma}
+If the sequence $Z_0, \dots, Z_k$ is a martingale w.r.t. $X_0, \dots, X_k$, then $\EE[Z_k] = \EE[Z_0]$.    
+\end{lemma}
+\begin{proof}
+By definition, $\EE[Z_{i+1}|X_0, \dots, X_i] = Z_i$. Taking expectation on both sides, and by law of iterated expectations, $\EE[\EE[Z_{i+1}|X_0, \dots, X_i]] \equiv \EE[Z_{i+1}] = \EE[Z_i]$. Now repeat, and show that $\EE[Z_{i+1}] = \EE[Z_i] = \EE[Z_{i-1}] = \dots = \EE[Z_0]$.
+\end{proof}
+\begin{eg}
+Consider a gambler who plays a sequence of fair games. A game is fair if the following condition holds: Let $X_i$ be the amount the gambler wins on the $i^{\text{th}}$ game, then $\EE[X_i] = 0$ irrespective of how much the gambler bets. \\
+Let $Z_i:= $ gambler's total winnings/profit at the end of the $i^{\text{th}}$ game. Thus, $Z_i = \sum_{j=1}^i X_j$. Then, 
+\[\EE[Z_{i+1} | X_0, \dots, X_i] = \EE[Z_i + X_{i+1} | X_0, \dots, X_i] = Z_i + \underbrace{\EE[X_{i+1} | X_0, \dots, X_i]}_{= 0} = Z_i\]
+Thus, the total winnings is a martingale
+\end{eg}
+\begin{definition}[Stopping Time]
+A non-negative, integer-values random variable $T$ is a stopping time for the sequence $\{Z_n, n \geq 0\}$ if the evenet $T = n$ depends only on the values of $Z_0, \dots, Z_n$.    
+\end{definition}
+Some examples are:
+\begin{itemize}
+    \item $T = $ the first time you win a game is a stopping time
+    \item $T = $ the last time you win a game is not a stopping time
+\end{itemize}
+\begin{theorem}[Martingale Stopping Theorem]
+If $Z_0, Z_1, \dots$ is a martingale w.r.t. $X_0, X_1, \dots$ and if $T$ is a stopping time for $X_0, X_1, \dots$, then: $\EE[Z_T] = \EE[Z_0]$ whenever $\exists$ constants $c_1, c_2$ such that
+\begin{enumerate}[label=(\roman*)]
+    \item $|Z_i| \leq c_1 \;\; \forall \;i$
+    \item $\PP(T < \infty) = 1$
+    \item $\EE[|Z_{i+1} - Z_i| | X_1, \dots, X_{i}] < c_2$
+\end{enumerate}
+\end{theorem}
+\begin{eg}[Gambler's ruin]
+A gambler plays a fair game in which in each round, the gambler wins a rupee w.p. $1/2$ and loses a rupee w.p $1/2$. The gambler starts with Rs. $a$ and quits player either when she has Rs. $b (b > a)$ or goes bankrupt. What is the probability that she goes bankrupt?\\
+Let $X_i$ be the amount won in round $i$, and $Z_i$ be the total money the gambler has after round $i$. $Z_0 = a$, $Z_i = a+\sum_{j=1}^i X_i$. Define $T$ to be the first time the gambler has Rs. $b$ or goes bankrupt. By martingale stopping theorem, $\EE[Z_T] = \EE[Z_0] = a$. \\
+If $p_B$ is the probability of going bankrupt, then $\EE[Z_T] = p_B \cdot 0 + (1-p_B) b = a \implies p_B = 1-a/b$.
+\end{eg}
+\begin{eg}[Red now]
+Starting with a deck of 52 cards (26 black, 26 red), the dealer draws one card at a time without replacement. At any time if you say \textit{"red now"}, and the next card is red, you win Rs. 200, else you lose. What is a good strategy?\\
+Let $R_n$ be the number of red cards after the $n^\text{th}$ draw.
+\[
+R_{n+1} = \begin{cases}
+    R_n - 1 &\text{w.p. } \frac{R_n}{52-n} \\ 
+    R_n &\text{otherwise}
+\end{cases}
+\]
+\[
+\EE[R_{n+1} | R_n] = (R_n-1)\left(\frac{R_n}{52-n}\right) + R_n\left(1-\frac{R_n}{52-n}\right) = R_n\left(\frac{52-n-1}{52-n}\right)
+\]    
+Then, $Y_n = R_n/(52-n)$, i.e., fraction of red cards remaining, is a martingale. Let $T$ be your stopping time. We have, $\EE[Y_T] = \EE[Y_0] = 1/2$ by the martingale stopping theorem. Thus, any causal strategy is equally good or bad (i.e., there is no \textit{bad} causal strategy).
+\end{eg}
+\begin{hw}\label{hw:prop-conditional-hoeffding}
+Let $Y$ be a random variable such that $\EE[Y|Z] = 0$, where $Z$ is another random variable, and $\PP(Y < a \text{ or } Y > b) = 0$. Then $\EE[e^{\theta Y} | Z] \leq \exp\left(\frac{\theta^2 (b-a)^2}{8}\right)$. \\
+\textit{This is essentially Hoeffding's lemma with conditioning.}
+\end{hw}

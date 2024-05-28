@@ -1,0 +1,82 @@
+\chapter{Continuing the Stochastic TSP}
+\begin{eg}[Traveling salesman problem (take 2) contd.]
+The big picture is to use BMDC. We need that: $|\EE[T_n|\ov{P}_i] - \EE[T_n|\ov{P}_{i-1}]| \leq f(i,n)$. Taking conditional expectations in Lemma~\ref{lemma:shortest-tour}:
+\begin{align*}
+    \EE[T_n(i) | \ov{P}_{i-1}] &\leq \EE[T_n | \ov{P}_{i-1}] \leq \EE[T_n(i) | \ov{P}_{i-1}] + 2\EE[z_i | \ov{P}_{i-1}] \\ 
+    \EE[T_n(i) | \ov{P}_{i}] &\leq \EE[T_n | \ov{P}_{i}] \leq \EE[T_n(i) | \ov{P}_{i}] + 2\EE[z_i | \ov{P}_{i}]
+\end{align*}
+Recall that $T_n(i)$ is the length of the optimal tour exlcuding $P_i$. Note that $\EE[T_n(i) | \ov{P}_{i-1}] = \EE[T_n(i) | \ov{P}_i] = a$ (say) as $T_n(i)$ doesn't depend on $P_i$ at all (since it is the length of the tour without $P_i$).
+\begin{note}
+The condition $\ov{P}_i$ is on the input sequence $P_1, \dots, P_i$ (as they are generated) and not the sequence of optimal tour.
+\end{note}
+The above gives us that $\EE[T_n|\ov{P}_{i-1}] \in [a, a + (\cdots)_1]$ and $\EE[T_n|\ov{P}_{i}] \in [a,a + (\cdots)_2]$. Thus,
+\[
+|\EE[T_n|\ov{P}_{i-1}] - \EE[T_n|\ov{P}_{i-1}]| \leq 2 \max \{\EE[z_i | \ov{P}_{i-1}], \EE[z_i | \ov{P}_{i}]\}  
+\]
+\newcommand{\ovp}{\ov{P}}
+\begin{lemma}
+$\EE[z_i | \ovp_i] - \EE[z_i|\ovp_{i-1}] \leq c/\sqrt{n-i}$ for some $c > 0$, where $z_i = \max_{j > i} d(P_i, P_j)$.
+\end{lemma}
+\begin{proof}
+We focus on a more general setting. Pick $Q \in [0,1]^2$ arbitrarily (not necessarily randomly). Generate a collection of $\ell$ i.i.d. uniformly chosen ppints in $[0,1]^2$. Call them $\{s_1, \dots, s_\ell\}$. Let $z = \min_{1\leq k\leq \ell} d(Q, s_k)$. Clearly, $z \in [0,\sqrt2]$. Then,
+\[
+\{z > x\} \longleftrightarrow \left\{\Bcal(Q, x) \cap [0,1]^2 \text{ does not contain } \{s_1, \dots, s_k\}\right\}
+\]
+where $\mathcal{B}(Q,x)$ denotes the ball of radius $x$ around $Q$. We want a lower bound on the area of $\Bcal(Q,x) \cap [0,1]^2$ that is independent of $Q$. Problem with the bound is that at the corner of the square, 3/4th of the ball is always outside, and when $Q$ is at the center, a circle of radius $\sqrt{2}$ will be completely outside. We can check that
+\[
+\text{Area}(B(Q,x) \cap [0,1]^2) \geq \tau x^2
+\]
+where $\tau = \pi/32$. This comes from the fact that at the center, $B(Q,x/2\sqrt{2})$ completely fills the square, and thus 1/4th of this is always inside (considering the corner).
+Then,
+\[
+\PP(z > x) \leq (1-\tau x^2) ^ \ell \leq e^{-\tau x^2 \ell}
+\]
+Then, since $z$ is a positive random variable,
+\begin{align*}
+    \EE[z] &\leq \int_0^{\sqrt{2}}\PP(z > x) = \sqrt{\frac{2\pi}{\ell \tau}} \int_0^{\sqrt{2}} \frac{e^{-\tau x^2 \ell}}{\sqrt{2\pi / \ell\tau}} \\
+    &\leq \sqrt{\frac{2\pi}{\ell \tau}} \int_0^{\infty} \frac{e^{-\tau x^2 \ell}}{\sqrt{2\pi / \ell\tau}} \\
+    &= \frac{c'}{\sqrt{\ell}}
+\end{align*}
+Now we do pattern matching. Let $Q = P_i$, $\{s_1, \dots, s_\ell\} = \{P_{i+1}, \dots, P_n\}$. This makes $z \equiv z_i$, and moreover, $\EE[z_i] = \EE[z_i | \ov{P}_{i-1}]$ as $z_i$ only depends on $P_{i+1}, \dots, P_n$. Now for $\EE[z_i | \ov{P}_i]$, the bound above holds, as $Q$ was chosen arbitrarily. Thus, $\EE[z_i | \ovp_i] \leq c/\sqrt{n-i}$ and $\EE[z_i|\ovp_{i-1}] \leq c/\sqrt{n-i}$. 
+\end{proof}
+\noindent Thus,
+\[
+|\EE[T_n | \ovp_i] - \EE[T_n | \ovp_{i-1}]| \leq \frac{\widetilde{c}}{\sqrt{n-i}}
+\]
+Note that for $i=n$, we can use the easy bound of $2\sqrt{2}$. Thus,
+\[
+\sum_{i=1}^n \left(\frac{\widetilde{c}}{\sqrt{n-i}}\right)^2 + 8 \approx 8 + \widetilde{c}^2 \log n
+\]
+Now using Azuma-Hoeffding, 
+\[
+\PP(T_n - \EE[T_n] > t) \leq \exp\left(-\frac{2t^2}{8 + \widetilde{c}^2 \log n}\right)
+\]
+Let $t = \epsilon \beta \sqrt{n}$, where $\EE[T_n] = \beta \sqrt{n}$. Then,
+\[
+\begin{split}
+&\text{BMDC }\implies \PP(T_n - \EE[T_n] > t) \leq \exp\left(-\frac{2\epsilon^2\beta^2 n}{8 + \widetilde{c}^2 \log n}\right) \\ 
+&\text{BDC }\implies \PP(T_n - \EE[T_n] > t) \leq \exp\left(-\frac{\epsilon^2\beta^2}{4}\right) 
+\end{split}
+\]
+\end{eg}
+\section{Blowing-up Lemma}
+\begin{lemma}[Blowing-up Lemma]
+Setting: $\{X_1, \dots, X_n\}$ are independent random variables. Let $d_H(\ov{x}, \ov y) = \sum_{i=1}^n \mathbf{1}_{\{x_i \neq y_i\}}$. Let $x_k \in \Omega_k$, and $\Omega = \Omega_1 \times \Omega_2 \times \dots \times \Omega_n$. Then, $\forall t \geq 0$ and every set $A \subseteq \Omega$,
+\begin{equation}
+    \PP(\ov{X} \in A) \PP(d_H(\ov{X}, A) \geq t) \leq \exp\left(-\frac{t^2}{2n}\right)
+\end{equation}
+where $d_H(\ov{x},A) = \min_{\ov{y} \in A} d_H(\ov x, \ov y) = \min_{\ov y\in A} \sum_{i=1}^n \mathbf{1}_{\{x_i \neq y_i\}}$
+\end{lemma}
+The rough interpretation is as follows: Let $\PP(\ov X \in A) = \Theta(1)$, then $\PP(d_H(\ov{X}, A) \geq t) \leq ce^{-t^2/2n}$. Now, $t = \sqrt{2n \log n}$. Then,
+$\PP(d_H(\ov X, A) \geq t) \leq ce^{-\log n} = c/n$. This essentially means that: if you blow up $A$ to a larger ball satisfying the Hamming distance.
+\begin{proof}
+Outline: McDiarmid's inequality (lower-tail + upper-tail) and we change variables multiple times. \\
+Let $\rho = \PP(\ov X \in A)$ and $\mu = \EE[d_H(\ov X, A)]$. Let $f(X_1, \dots, X_n) = d_H(\ov{X}, A) $. Then $f$ satisfies the BDC with $d_i = 1$ $\forall i$. Then, by Mcdiarmid's inequality:
+\[
+\begin{split}
+    \PP(d_H(\ov X, A) - \mu \geq t) &\leq \exp\left(-\frac{2t^2}{n}\right) \quad (*) \\
+    \PP(d_H(\ov X, A) - \mu \leq -t) &\leq \exp\left(-\frac{2t^2}{n}\right) \quad (**)
+\end{split}
+\]
+Note that $d_H(\ov x, A) = 0 \longleftrightarrow \ov x \in A$, and $d_H(\ov x, A) \geq 0$ $\forall \ov x \in \Omega$.
+\end{proof}

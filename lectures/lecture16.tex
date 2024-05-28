@@ -1,0 +1,116 @@
+\chapter{Continuing Variance Bounds}
+\begin{proof} (Continued from last lecture). We saw that $\text{var}(Z) = \EE[\sum_i V_i^2]$
+    
+\begin{prop}
+$V_i^2 \leq \EE[(Z-\EE_i[Z])^2 | X_1, \dots, X_i]$
+\end{prop}
+\begin{proof}
+\textit{Note:} $\EE_i[Z] = \EE[Z | X_{\setminus i}^{(n)}]$.
+\begin{align*}
+    V_i^2 &= \left(\underbrace{\EE[Z | X_1, \dots, X_i]}_{T_1} - \underbrace{\EE[Z | X_1, \dots, X_{i-1}]}_{T_2} \right)
+\end{align*}
+Since inner conditioning set can be richer than outer,
+\begin{align*}
+    T_1 &= \EE[Z | X_1, \dots, X_i] \\
+    T_2 &= \EE[\EE[Z | X_1, \dots, X_{i-1}, X_{i+1}, \dots, X_n] | X_1, \dots, X_{i-1}]
+\end{align*}
+For $T_2$, the inner condition expectation averages out $X_i$, and hence it is independent of the realization of $X_i$. Thus, we can add $X_i$ to the outer conditioning set.
+\begin{align*}
+    T_2 &= \EE[\EE[Z | X_1, \dots, X_{i-1}, X_{i+1}, \dots, X_n] | X_1, \dots, X_{i-1}, X_i] \\
+    &= \EE\left[\EE_i[Z] | X_1, \dots, X_i\right]
+\end{align*}
+Effectively, we have made the conditioning sets the same.
+Thus,
+\begin{align*}
+    V_i^2 &= \EE\left[Z - \EE\left[Z  | X_{\setminus i}^{(n)}\right] \bigg| X_1,\dots,X_i\right] \\
+    &\leq \EE\left[\left(Z - \EE\left[Z  | X_{\setminus i}^{(n)}\right]\right)^2 | X_1, \dots, X_i\right] \\
+    &= \EE\left[(Z - \EE_i[Z])^2 | X_1, \dots, X_i\right]
+\end{align*}
+\end{proof}
+Hence, we get that
+\begin{align*}
+    \text{var}(Z) &= \EE\left[\sum_{i=1}^n V_i^2\right] \\
+    &\leq \sum_{i=1}^n \EE\left[\EE[(Z - \EE_i[Z])^2 | X_1, \dots, X_i]\right] \\
+    &= \sum_{i=1}^n \EE[(Z - \EE_i[Z])^2]
+\end{align*}
+\end{proof}
+Note, for $i = 1$, an equality holds.
+\section{Proof of Efron-Stein Inequality}
+Let $(X_1', X_2', \dots, X_n') \stackrel{d}{=} (X_1, \dots, X_n)$, each $\bot$ and let $Z_i' = f(X_1, \dots, X_{i-1}, X_i', X_{i+1}, \dots, X_n)$. The theorem stated that 
+\[
+\text{var}(Z) \leq \frac{1}{2} \sum_{i=1}^n \EE[(Z - Z_i')^2]
+\]
+We prove it here.
+\begin{proof}
+Recall that by law of iterating expecations,
+\begin{align*}
+    \text{var}(Z) &\leq \sum_{i=1}^n \EE[(Z - \EE_i[Z])^2] \\
+    &= \sum_{i=1}^n \EE\left[\EE_i[(Z- \EE_i[Z])^2]\right]
+\end{align*}
+where $\EE_i[Z] = \EE[Z | X_{\setminus i}^{(n)}]$.
+\begin{prop}
+\[
+\EE_i[(Z - \EE_i[Z])^2] = \frac{1}{2} \EE_i[(Z - Z_i')^2]
+\]
+\end{prop}
+\begin{proof}
+We can write the RHS as
+\begin{align*}
+    \frac{1}{2} \EE_i[Z^2 + Z_i'^2 - 2 Z Z_i'] &= \frac{1}{2} \EE[Z^2 | X_{\setminus i}^{(n)} ] + \EE[Z_i'^2 | X_{\setminus i}^{(n)}] - \EE[Z Z_i' | X_{\setminus i}^{(n)}] \\
+    &= \EE[Z^2 | X_{\setminus i}^{(n)}] - \EE[Z|X_{\setminus i}^{(n)}]\EE[Z_i'|X_{\setminus i}^{(n)}] \\
+    &= \EE[Z^2 | X_{\setminus i}^{(n)}] - \left(\EE[Z|X_{\setminus i}^{(n)}]\right)^2
+\end{align*}
+This is possible since only $X_i$ are unknown by the conditioning set.
+Now we can write the LHS as
+\begin{align*}
+    \EE_i[Z^2 + (\EE_i[Z])^2 - 2Z\EE_i[Z]] &= \EE_i[Z^2] + \EE_i[(\EE_i[Z])^2] - 2\EE_i[Z\EE_i[Z]] \\
+    &= \EE_i[Z^2] + (\EE_i[Z])^2 - 2(\EE_i[Z])^2 \\
+    &= \EE_i[Z^2] - (\EE_i[Z])^2 = RHS
+\end{align*}
+\end{proof}
+This completes the proof of Efron-Stein.
+\end{proof}
+\section{First Passage Percolation in Graphs}
+Let $G(V,E)$ be a directed graph where $E = \{e_i, i=1,\dots, |E|\}$ be the set of directed edges. Let $X_i$ be the transit time over directed edge $e_i$, $X_i's$ are independent and $\EE[X_i^2] = \sigma^2 \; \forall i$. Moreover, these $X_i's$ are positive. Fix vertices $V_1, V_2$ and let $\Pcal$ denote the set of all paths from $V_1$ to $V_2$. We have $Z = g(X_1, \dots, X_{|E|}) = \min_{P \in \Pcal} \sum_{e_i \in P} X_i$. \\
+Let $P^*$ denote an optimal path i.e, 
+\[
+P^* \in \arg\min_{P \in \Pcal} \sum_{e_j \in P} X_j
+\]
+We have
+\begin{align*}
+    \text{var}(Z) &\leq \frac{1}{2} \sum_{i=1}^n \EE[(Z - Z_i')^2] \\
+    &= \frac{1}{2} \sum_{i=1}^n \EE[(Z - Z_i')^2 \bm{1}_{\{Z_i' < Z\}}
+    + (Z - Z_i')^2 \bm{1}_{\{Z_i' = Z\}}
+    + (Z - Z_i')^2 \bm{1}_{\{Z_i' > Z\}}
+    ] \\
+    &= \sum_{i=1}^n \EE[(Z - Z_i')^2 \bm{1}_{\{Z_i' < Z\}}]
+\end{align*}
+This follows by the symmetry of $Z$ and $Z_i'$. Replace $X_i$ by $X_i'$. Then,
+\[
+Z_i' = \min_{P \in \Pcal}\sum_{e_j \in P} \tilde{X}_j \quad \text{ where } \tilde{X}_j = \begin{cases}
+X_i' &\text{ for } i = j \\
+X_i &\text{ for } i \neq j
+\end{cases}
+\]
+Now, note that (emphasizing on direction of implication)
+\[
+\{Z_i' > Z\} \implies \{X_i' > X_i\} \text{ and } \{e_i \in P^*\}
+\]
+Thus, we can write (since the probability of RHS is larger, and the function value changes by $(Z_i' - Z)^2$, and moreover $\bm1_{\{Z_i' > Z\}} \leq \bm1_{\{\{X_i' > X_i\} \cap \{e_i \in P^*\}\}} \leq \bm1_{\{e_i \in P^*\}}$)
+\[
+(Z_i' - Z)^2 \bm{1}_{\{Z_i' > Z\}} \leq (X_i' - X_i)^2 \bm{1}_{\{e_i \in P^*\}} \leq (X_i')^2 \bm{1}_{\{e_i \in P^*\}} 
+\]
+{\color{red} This reasoning needs fixing}
+Note that the inequality holds as the optimal path might change later on if $X_i'$ is very large. The last inequality is a very loose bound (but the motivation is that we want to make $e_i \in P^*$ and $X_i'$ independent). It follows that
+\begin{align*}
+    \text{var}(Z) &ß\leq \sum_{i=1}^n \EE[X_i'^2 \bm{1}_{\{e_i \in P^*\}}] \\
+    &= \sum_{i=1}^n \EE[X_i'^2]\EE[\bm{1}_{\{e_i \in P^*\}}] \\
+    &\leq \sigma^2 L
+\end{align*}
+where $L$ is the path from $V_1 \to V_2$ with the maximum number of hops / edge.
+\section{Example: Bin Packing}
+Given $n$ numbers $X_1, \dots, X_n \in [0,1]$, what is the minimum number of bins into which these numbers can be packed such that the sum of the numbers in each bin is $\leq 1$. Let $Z = g(X_1, \dots, X_n)$ be this number. What is $\text{var}(Z) \leq $ ??. 
+\begin{align*}
+    \text{var}(Z) \leq \frac{1}{2} \sum_{i=1}^n \EE[(Z - Z_i')^2] \leq \frac{n}{2}
+\end{align*}
+Since at-most the number of bins can change by $1$ when the variable $X_i$ is changed.

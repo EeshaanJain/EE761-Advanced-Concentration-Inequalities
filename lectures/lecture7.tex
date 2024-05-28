@@ -1,0 +1,134 @@
+\chapter{More on Martingales}
+\begin{remark}
+For a martingale $\{X_0, \dots, X_n\}$, we call the condition $a_k \leq |X_k - X_{k-1}| \leq b_k$ as the \textit{bounded martingale difference condition} (BMDC).
+\end{remark}
+\section{Azuma-Hoeffding Inequality}
+\begin{theorem}[Azuma-Hoeffding Inequality]
+Let $\{X_0, X_1, \dots, X_n\}$ be a martingale such that $a_k \leq |X_k - X_{k-1}| \leq b_k$. Then, $\forall t \geq 0$, 
+\begin{equation}
+\begin{split}
+    \PP\left(X_n - X_0 > t\right)& \\
+    \PP\left(X_n - X_0 < -t\right)
+\end{split}
+\; \leq \exp\left(
+\frac{-2t^2}{\sum_{i=1}^n (b_i - a_i)^2}\right)
+\end{equation}
+(i.e., the random variable at the $n^\text{th}$ timestep is not that far away from $X_0$).
+\end{theorem}
+\begin{proof}
+Let $Y_i = X_i - X_{i-1}$ for $i = 1, \dots, n$. We have
+\begin{align*}
+    \EE[Y_k | X_0, \dots, X_{k-1}] &= \EE[X_{k} - X_{k-1} | X_0, \dots X_{k-1}] \\
+    &= \EE[X_k | X_0, \dots, X_{k-1}] - X_{k-1} \\
+    &= X_{k-1} - X_{k-1} = 0 \quad \text{ (since the sequence is a martingale)}
+\end{align*} 
+Now, recall that from Proposition in Homework~\ref{hw:prop-conditional-hoeffding}, if $Y$ is a random variable with $\EE[Y|Z] = 0$ and $\text{supp}(Y) \in [a,b]$, then $\EE[e^{\theta Y} | Z] \leq \exp(\theta^2(b-a)^2/8)$. \\
+Then we have,
+\[
+\EE[e^{\theta Y_k} | X_0, \dots, X_{k-1}] \leq \exp\left(\frac{\theta^2(b_k -a_k)^2}{8}\right) \text{ for } k = 1, \dots, n\]
+We have the telescopic sum, 
+\begin{align*}
+\EE[e^{\theta(X_n - X_0)}] &= \EE[{e^{\theta \sum_{i=1}^n Y_i}}] = \EE\left[\prod_{i=1}^n e^{\theta Y_i}\right] \\
+&= \EE\left[\EE\left[\prod_{i=1}^{n} e^{\theta Y_i} | X_0 ,\dots X_{n-1}\right]\right] \\
+&= \EE\left[\prod_{i=1}^{n-1}e^{\theta Y_i} \EE\left[e^{\theta Y_n | X_0, \dots, X_{n-1}}\right]\right] \\
+&\leq \exp\left(\frac{\theta^2(b_n-a_n)^2}{8}\right) \EE\left[\prod_{i=1}^{n-1}e^{\theta Y_i}\right]
+\end{align*}
+We can repeat this $n-1$ times to get,
+\[
+\EE\left[{e^{\theta(X_n - X_0)}}\right] \leq \exp\left(\frac{\theta^2 \sum_{k=1}^n (b_k-a_k)^2}{8}\right)
+\]
+By Markov's Inequality, we have $\PP(X_n - X_0 > t) \leq \EE[e^{\theta (X_n - X_0)}]/e^{\theta t}$. We can optimize for $\theta$ to get $\theta^* = 4t/(\sum_{k=1}^n (b_k - a_k)^2)$
+\end{proof}
+\begin{eg}
+Let 
+\begin{enumerate}[label=(\roman*)]
+    \item $W_i$ be the amount you win in  round $i$
+    \item $B_i$ be the amount you bet in round $i$, and $B_i = f(W_1, \dots, W_{i-1})$
+    \item $W_i$ is $\pm B_i$ w.p. $1/2$ (i.e., independent of the past) $\implies \EE[W_i | W_1, \dots, W_{i=1}] = 0$
+    \item $B_i \leq b_{\text{max}}$
+    \item Start with \$$a$.
+\end{enumerate}
+Let $X_n$ be the money you have after $n$ rounds, i.e., $X_n = a  + \sum_{i=1}^n W_i$. We want to find an upper bound on $\PP(X_n - a \geq \sqrt{n\log n})$. \\
+First we show that $\{X_i\}$ is a martingale.
+\begin{enumerate}
+    \item $\EE[X_{n+1} | W_1, \dots W_n] = \EE[W_{n+1} + X_n | W_1, \dots, W_n] = 0 + X_n$. Thus, $X_n$ is a martingale w.r.t $W$'s.
+    \item $|X_{n-1} - X_{n}| = |B_n| \leq b_{\text{max}}$
+\end{enumerate}
+By Azuma-Hoeffding,
+\[
+\PP(X_n - X_0 > \sqrt{n\log n}) \leq \exp\left(\frac{-2n\log n}{nb_{\text{max}}^2}\right) = n^{-2/b^2_\text{max}}
+\]
+\end{eg}
+\section{Doob's Martingale}
+\begin{definition}[Doob's Martingale]
+Let $f: \RR^n \to \RR$ be a function of $(X_1, \dots, X_n)$ random variables, say $Z = f(X_1, \dots, X_n)$. The Doob's martingale associated with $f$ is denoted by $Y_0, \dots Y_n$ such that 
+\begin{equation}
+    Y_k = \EE[Z | X_1, \dots X_k]
+\end{equation}
+We have $Y_0= \EE[Z]$, $Y_1 = \EE[Z|X_1]$, $\dots$, $Y_n = \EE[Z|X_1, \dots X_n] = Z$.
+\end{definition}
+\begin{note}
+We need to show that $Y_0, \dots, Y_n$ us a martingale w.r.t. $X_1, \dots, X_n$. Then,
+\begin{align*}
+\EE[Y_{k+1} | X_1, \dots, X_k] &= \EE[\EE[Z|X-1, \dots X_{k+1}] | X_1, \dots X_k] \\
+&= \EE[Z | X_1, \dots X_k] = Y_k
+\end{align*}
+Notice that $Y_n - Y_0$ is just $Z - \EE[Z]$, and Azuma-Hoeffding lets us bound $\PP(Z - \EE[Z] \geq t)$ (note that we would have to satisfy the martingale difference bound here).
+\end{note}
+\begin{corollary}
+Let $\{X_1, \dots, X_n\}$ be a collection of random variables and $Z = f(X_1, \dots, X_n)$ be a function satisfying $|\EE[Z|X_1, \dots, X_i] - \EE[Z|X_1, \dots X_{i-1}]| \leq c_i$. Then,
+\begin{equation}
+\begin{split}
+    \PP\left(Z - \EE[Z] > t\right)& \\
+    \PP\left(Z - \EE[Z] < -t\right)
+\end{split}
+\; \leq \exp\left(
+\frac{-2t^2}{\sum_{i=1}^n c_i^2}\right)
+\end{equation}
+\end{corollary}
+\begin{proof}
+$Y_0 = \EE[Z]$, $Y_n = Z$, and use the definition of Doob's martingale along with Azuma-Hoeffding.
+\end{proof}
+\begin{remark}
+\begin{enumerate}[label=(\roman*)]
+    \item No restriction on the $X_i$'s (not necessarily indpendent or identically distributed)
+    \item $f$ can be any function satisfying the bounded martingale difference condition (i..e, $f$ can be more general than the sum).
+\end{enumerate}
+\end{remark}
+\begin{definition}[Average Lipschitz Conditions (ALC)]
+A function $f$ satisfies the ALC if for any $a_i$ and $a_i$'s, we have that
+\begin{equation}
+|\EE[f(X_1,\dots,X_n)|X_1,\dots,X_{i-1},X_i=a_i] - \EE[f(X_1,\dots,X_n)|X_1,\dots,X_{i-1},X_i=a_i']| \leq c_i 
+\end{equation}
+$\forall\; i=1, \dots, n$ where $c_i$'s are independent of $a_i$ and $a_i$.
+\end{definition}
+\begin{prop}
+If a function satisfies the ALC, it also satisfies the BMDC, i.e, ALC $\implies$ BMDC.   
+\end{prop}
+\begin{proof}
+Let $\overline{X}_i = (X_1, \dots, X_i)$, and $\underline{X}_i = (X_{i+1}, \dots)$. We have
+\begin{align*}
+    \EE[Z|\overline{X}_{i-1}] &= \int_a \EE[Z| \overline{X}_{i-1}, X_i=a] \PP(X_i=a|\overline{X}_{i-1}) \\
+    \EE[Z|\overline{X}_{i}]&= \int_a \EE[Z|X_i] \PP(X_i=a | \overline{X}_{i-1})
+\end{align*}
+Note that the second equation is just multiplying $\EE[Z|X_i]$ with $1$. Subtracting,
+\begin{align*}
+|\EE[Z | \overline{X}_i] - \EE[Z | \overline{X}_{i-1}]| &= \left|\int_a \left(\EE[Z | \overline{X}_{i-1}, X_i =a] - \EE[Z|\overline{X}_i]\right) \PP(X_i=a|\overline{X}_{i-1})\right| \\
+&\leq \int_a \left|\left(\EE[Z | \overline{X}_{i-1}, X_i =a] - \EE[Z|\overline{X}_i]\right) \right|\PP(X_i=a|\overline{X}_{i-1})
+\end{align*}
+Now for all values of $X_i$, $\left|\left(\EE[Z | \overline{X}_{i-1}, X_i =a] - \EE[Z|\overline{X}_i]\right) \right| \leq c_i$ by ALC (to see this, write the second expectation as $\int_{a'} \EE[Z|\overline{X}_{i-1},X_i=a'] \PP(X_i=a')$ and first one as $\int_{a'} \EE[Z|\overline{X}_{i-1}, X_i=a) \PP(X_i = a')$. We get this to be bounded by $\int_{a'} c_i \PP(X_i=a'|\overline{X}_{i-1}) = c_i$.  Hence, 
+\[
+|\EE[Z | \overline{X}_i] - \EE[Z | \overline{X}_{i-1}]| \leq c_i \int_a \PP(X_i=a|\overline{X}_{i-1}) = c_i
+\]
+Hence ALC $\implies$ BMDC.
+\end{proof}
+\begin{definition}[Bounded difference condition (BDC)]
+A function $f$ satisfies the BDC with constants $\{d_1, \dots, d_n\}$ if
+\begin{equation}
+    |f(x_1, \dots, x_i, x_{i+1}, \dots x_n) - f(x_1, \dots, x_i', x_{i+1}, \dots, x_n)| \leq d_i
+\end{equation}
+$\forall\; (x_i, x_i'), (x_1,\dots,x_{i-1}), (x_{i+1},\dots,x_n)$ and $\forall\;i=1,\dots,n$.
+\end{definition}
+\begin{remark}
+BDC + independence $\implies$ ALC $\implies$ BMDC    
+\end{remark}

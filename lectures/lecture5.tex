@@ -1,0 +1,109 @@
+\chapter{More on Negative Association}
+\section{Balls and bins}
+The setting is as follows: there are $m$ balls thrown independently into $n$ bins. For $1\leq i \leq n$, $1 \leq k \leq m$, let $p_{i,k} = \PP(\text{ball $k$ is dropped in bin $i$})$ . Define:
+\[
+\Bcal_{i,k} = \begin{cases}
+    1&\text{if ball $k$ in bin $i$} \\ 0&\text{otherwise}
+\end{cases},\quad B_i = \sum_{k=1}^m B_{i,k} = \text{\texttt{\#} balls in bin $i$}
+\]
+We want to show that $\Bcal_i$'s are negatively associated.
+\begin{lemma}[Zero-One Lemma]\label{lemma:zero-one}
+Let $\{X_1, \dots, X_n\}$ be Bernouli random variables with $\sum_{i=1}^n X_i = 1$. Then $\{X_1, \dots, X_n\}$ are negatively associated.
+\end{lemma}
+\begin{proof}(by McDiarmid) Choose $I, J \subseteq [n]$, $I \cap J = \emptyset$, $f, g$ are non-decreasing, and $f: \RR^{|I|} \to \RR$, $g: \RR^{|J|} \to \RR$. Now, let
+\begin{align*}
+\widetilde{f}(X_i, i \in I) &= f(X_i, i \in I) - \underbrace{f(0, \dots, 0)}_{c_f} \\
+\widetilde{g}(X_j,j \in J) &= g(X_j, j \in J) - \underbrace{g(0, \dots, 0)}_{c_g}
+\end{align*}
+We can see that $\widetilde{f}(X_i, i \in I) \geq 0$ w.p, 1, and $\widetilde{g}(X_j, j \in J) \geq 0$ w.p. 1. \\
+We claim that
+\[
+\EE[\widetilde{f}(X_i, i \in I) \widetilde{g}(X_j, j \in J)] \leq \EE[\widetilde{f}(X_i, i \in I)]\EE[\widetilde{g}(X_j, j \in J)]
+\]
+Proof: We see that the LHS is 0 and the RHS is $\geq 0$, since either $X_i, i \in I$ are all zeros, or $X_j, j \in J$ are all zeros, or $X_k, k \in I \cup J$ are all zeros. Hence, $\widetilde{f}(\cdot) \widetilde{g}(\cdot) = 0$ w.p. 1. \\
+Now replace $\widetilde{f}$ and $\widetilde{g}$ with their definitions and expand to prove.
+\end{proof}
+\begin{prop}\label{prop:union-neg-asso}
+If $\overline{X}$ and $\overline{Y}$ are negatively associated, and $\overline{X}$, $\overline{Y}$ are mutually independent, then $(\overline{X}, \overline{Y})$ is negatively associated.    
+\end{prop}
+\begin{proof}
+Skipped.
+\end{proof}
+\begin{prop}\label{prop:func-neg-asso}
+All non-increasing or all non-decreasing functions of disjoint subsets of negatively associated random variables are also negatively associated.
+\end{prop}
+\begin{proof}
+Skipped.
+\end{proof}
+\begin{eg}
+Say we have $X_1, \dots, X_5$. Then $Y_1 = f_1(X_1, X_3)$, $Y_2 = f_2(X_5)$, $Y_3 = f_3(X_2)$ are negatively associated, where $f_1, f_2, f_3$ are non-decreasing functions.
+\end{eg}
+\begin{prop}
+$(\Bcal_{i,k}, i = 1, \dots, n, k = \dots, m)$ is negatively associated.
+\end{prop}
+\begin{proof}
+Firstly, $\{\Bcal_{1,k}, \dots \Bcal_{n,k}\}$ is negatively associated by Lemma~\ref{lemma:zero-one}. Now, each $\{\Bcal_{i,k_1}\}$ and $\{\Bcal_{i, k_2}\}$ are independent for all $k_1, k_2$ and $i$, and hence by Proposition~\ref{prop:union-neg-asso}, all $\{\Bcal_{i,k\}}$ are negatively associated.
+\end{proof}
+\begin{prop}
+$(\Bcal_1, \dots, \Bcal_n)$ are negatively associated.
+\end{prop}
+\begin{proof}
+We use Proposition~\ref{prop:func-neg-asso}, with the function being the sum $\sum_k \Bcal_{i,k}$. The sum function over the balls is both disjoint, and non-decreasing.
+\end{proof}
+\begin{eg}
+Let $m = n$, $p_{i,k} = \frac{1}{n} \forall i,k$. We want to obtain a concentration result for the number of non-empty bins. Let
+\[
+C_i = \begin{cases}
+    1 &\text{if bin $i$ has atleast 1 ball} \\
+    0 &\text{otherwise}
+\end{cases}
+\]
+Hence, $C_i = \Ical_{\{\Bcal_i > 0\}}$ for $1 \leq i \leq n$. These are negatively associated. Now,
+\[
+\EE[e^{\theta C_i}] = \left(1 - \frac{1}{n}\right)^n \cdot 0 + \left(1 - \left(1-\frac1n\right)^n\right)e^\theta = \left(1 - \left(1-\frac1n\right)^n\right)e^\theta 
+\]
+This is the same for all $i$. Hence, by negative association,
+\[
+\EE\left[e^{\theta \sum_i C_i}\right] \leq \prod_{i=1}^n \EE[e^{\theta C_i}] = \left(\EE[e^{\theta C_1}]\right)^n
+\]
+Now, 
+\[
+\PP\left(\sum_i C_i \geq n\epsilon\right) \leq e^{-\theta n \epsilon}\left(\EE[e^{\theta C_1}]\right)^n =\left(e^{-\theta \epsilon}\EE[e^{\theta C_1}]\right)^n 
+\]
+We can optimize for $\theta$ and find the bound. \\
+The classical caching problem is as follows: say the RAM can hold $c$ files and memory has $N$ files where $N \gg c$. We can think of the files as bins, and requests as balls. Each request is for a particular bin. Number of non-empty bins tells how many files were requested atleast once.
+\end{eg}
+\section{Limited Independence}
+\begin{eg}
+$X, Y$ are indpendent, each Bernoulli with $p = 1/2$. Let $Z = X \oplus Y$. We have $Z \sim \text{Bern}(1/2)$ too. However, $X \bot Y$, $Y \bot Z$, $Z \bot X$, but $(X,Y,Z)$ is not jointly independent.
+\end{eg}
+\begin{definition}
+A set of random variables $\{X_1, \dots, X_n\}$ is $k$-wise independent if $\forall I \subseteq [n]$, s.t. $|I| \leq k$,
+\begin{equation}
+    \PP\left(\bigcap_{i \in I} \{X_i = x_i\}\right) = \prod_{i \in I} \PP(X_i = x_i)
+\end{equation}
+\end{definition}
+Let $X_1, \dots, X_n$ be $0/1$ random variables which are $k$-wise independent. We want a bound for $\PP(\sum_{i=1}^n X_i > t)$. Markov's Inequality gives you
+\[
+\PP\left(\sum_{i=1}^n X_i > t\right) \leq \frac{\EE\left[\sum_{i=1}^n X_i\right]}{t} = \frac{np}{t} \text{ (assuming $X_i \sim \text{Bern}(p)$)}
+\]
+Let $G_k(X_1, \dots, X_n) = \sum_{I \subseteq [n], |I| = k}\prod_{i \in I} X_i$. Now say for $m \geq 0$, $m \in \mathbb{Z}^+$, we have
+\[
+\sum_{i=1}^n X_i = m \iff G_k(X_1, \dots, X_n) = \binom{m}{k}
+\]
+Hence,
+\[
+\PP\left(\sum_{i=1}^n X_n > t\right) = \PP\left(G_k(X_1, \dots X_n) > \binom tk\right) \leq \frac{\EE[G_k(X_1, \dots, X_n)]}{\binom tk}
+\]
+Now, to compute
+\begin{align*}
+    \EE[G_k(X_1, \dots, X_n)] &= \EE\left[\sum_{|I|=k}\prod_{i\in I} X_i\right] = \sum_{|I| = k} \EE\left[\prod_{i\in I} X_i\right] \\
+    &= \sum_{|I| = k} \prod_{i \in I} \EE[X_i] \qquad\text{({$k$-wise indpendence})} \\
+    &= \binom nk p^k
+\end{align*}
+Thus, 
+\[
+\PP(S_n > t) \leq \frac{\displaystyle \binom nk p^k}{\displaystyle\binom tk}
+\]
+\section{Martingales}
+They are sequences of random variables satisfying some properties. They have applications in gambling and are used to derive Chernoff-like bounds for functions of dependent random variables.

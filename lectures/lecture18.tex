@@ -1,0 +1,93 @@
+\chapter{On Degree Distribution of Barabasi-Albert}
+\textit{Source: Durrett, Random Graph Dynamics, 2007 \& }
+\section{Degree distribution for Preferential Attachment}
+The phenomenon of preferential attachment (PA) is analogous to \textit{Rich getting richer}. The graph generated such is also same as the Barabasi-Albert Model and Polya's Urn.
+\subsection{Model}
+We have discrete time $s = \{1,2,\dots, t,\dots\}$, and initially we start with two nodes with edge connected. Thus at $t=1$, we have a 2-node graph, with each node having degree 1. Now at $t = 2$, a new node comes, which attaches itself to a node with probability proportional to the degree of the node. Thus we have a graph with $3$ nodes and $2$ edges (hence, at $t=t_0$, we have a $t_0+1$ node graph with $t_0$ edges). After this, at $t=3$, we have $3$ nodes, and the new node attaches to the two endpoint nodes w.p $1/4$ and the center node w.p. $1/2$. Denote $Z(k,t)$ be the number of nodes with degree $k$ at time $t$. Denote $N(k,t) = \EE[Z(k,t)]$. We are also interested in computing $p_k = \lim_{t\to\infty} {N(k,t)}/t$ for $k=1,2,\dots$. We call the vector $\overrightarrow{p}$ as the degree distribution.
+\begin{prop}
+We will show that
+\begin{equation}
+    p_k = \frac{4}{k(k+1)(k+2)} \qquad \text{for } k =1,2,\dots
+\end{equation}
+\begin{equation}
+    \PP(|Z(k,t) - N(k,t)| > \sqrt{t\log t}) \leq t^{-1/8}
+\end{equation}
+\end{prop}
+\begin{remark}
+Due to the inverse polynomial nature of $p_k$, such graphs are also called power-law in nature. An example is Youtube (before it blew up). If we have $n$ files, and $p_i = \PP$(incoming request is for file $i$), it was seen that $p_i \propto i^{-\alpha}$ where $\alpha \in [0.8, 1.2]$. For Netflix, a while back, the $\log p_i$ v/s $i$ graph was a plateu followed by a straight line down with $\alpha = 2$.
+\end{remark}
+\begin{proof}
+We take an alternate view: 
+\begin{itemize}
+    \item Consider each edge tip (i.e., a vertex and the associated half-edge)
+    \item Pick one of the edge tips uniformly at random
+    \item Replicate the chosen edge tip
+    \item Attach a new vertex to the chosen edge tip
+\end{itemize}
+This makes it easier, as now for each vertex, we have the associated edge tips, and we can choose any edge tip uniformly at random. Let $\Gcal_i$ be the graph at timestep $i$. We define the Doob's martingale as $X_0 = \EE[Z(k,t)], X_1 = \EE[Z(k,t) | \Gcal_1], X_s = \EE[Z(k,t) | \Gcal_1,\dots,\Gcal_s]$ and $X_t = Z(k,t)$. We have ALC as follows:
+\[
+|\EE[Z(k,t) | \Gcal_1, \dots, \Gcal_{s-1}, \Gcal_s = g] - \EE[Z(k,t) | \Gcal_1, \dots, \Gcal_{s-1}, \Gcal_s = g']| \leq 2
+\]
+We can argue as follows, let the incoming node at time $s$ be $n_s$. Say $n_s$ can associate either with $v$ or $v'$. Since $t > s$, the decision-making at time step $s$ affects both of these vertices down the line. Now, it is apparent that it will not affect the degree of any node $w$ which is not $v$ or $v'$. Further, from $t = s+1, s+2, \dots,$ since each new edge tip is chosen uniformly at random, the probability of choosing a node tip corresponding to node $w$ remains unchanged. Now we can apply Azuma-Hoeffding inequality. Characterizing the expectation: (if difference goes down -)
+\[
+Z(k, t+1) = \begin{cases}
+Z(k,t) + 1 & \text{w.p. } \frac{k-1}{2t} Z(k-1,t) \\
+Z(k,t)  & \text{w.p. } \text{else}\\
+Z(k,t) - 1 & \text{w.p. } \frac{k}{2t} Z(k,t)
+\end{cases}
+\]
+Thus, we can write
+\begin{equation}
+% N(k,t+1) - N(k,t) = -\underbrace{\frac{N(k,t)}{t}}_{\PP(\text{choose deg-$k$ node})} \cdot \underbrace{\frac{k}{2t}}_{\text{deg / sum degree}} + N(k-1,t) 
+N(k,t+1) - N(k,t) = -N(k,t) \frac{k}{2t} + \frac{(k-1)}{2t} N(k-1,t) + \bm{1}_{\{k=1\}}
+\end{equation}
+The last came comes to the special case of $k=1$ as the incoming node will also contribute. The above equation is called the \textbf{Master Equation}. For $k=1$, we can write
+\[
+N(1, t+1) - N(1,t) = -N(1,t)\frac{1}{2t} + 1 \implies N(1,t+1) = 1 + \left(1 - \frac{1}{2t}\right) N(1,t)
+\]
+For convenience, let $N(1,t+1) = c + \left(1 - \frac{b(t)}{t}\right) N(1,t)$, where $c = 1, b(t) = 1/2$.
+\begin{lemma}
+We have
+\[
+\frac{N(1,t)}{t} \longrightarrow \frac{c}{1+b} \quad \text{ as $t\to\infty$}
+\]
+\end{lemma}
+\begin{proof}
+\begin{align*}
+    N(1,t+1) &= c + \left(1 - \frac{b}{t}\right)N(1,t) \\
+    &= c + \left(1 - \frac{b}{t}\right)\left(c + \left(1 - \frac{b}{t-1}\right)N(1,t-1)\right) \\
+    &= \vdots \\
+    &= c\sum_{s=1}^t \prod_{r=s+1^t}\left(1-\frac{b}{r}\right) + \prod_{r=1}^t \left(1-\frac{b}{r}\right) N(1,1)
+\end{align*}
+Now, we do the following approximations: if $b/r$ is small:
+\[
+\prod_{r=s+1}^t \left(1 - \frac br\right) \approx \exp\left(-\sum_{r=s+1}^t \frac br\right) \approx \exp(-b(\ln t - \ln s)) = \left(\frac st\right)^b
+\]
+Hence,
+\[
+N(1, t+1) \approx \underbrace{c\sum_{s=1}^t \left(\frac{s}{t}\right)^b}_{\Omega(1)} + \underbrace{N(1,1) \left(\frac{1}{t}\right)^b}_{o(1)}
+\]
+Now, as $t$ increases, we ignore the $o(1)$ term.
+\begin{align*}
+    N(1,t+1) &\approx c\sum_{s=1}^t (s/t)^b \\
+    N(1,t+1) &\approx c t^{-b} \int_0^t s^b ds \\
+    = \frac{ct}{b+1}
+\end{align*}
+This proves the lemma.
+\end{proof}
+\begin{lemma}
+We have
+\[
+\frac{N(k,t)}{t} \longrightarrow \frac{g_k}{b+1} \quad \text{as } t \to \infty
+\]
+where $g_k(t) = N(k-1,t)(k-1)/2t$ and $\lim_{t\to\infty} g_k(t) = g_k$
+\end{lemma}
+\begin{proof}
+Proof omitted. Refer to lemma $4.1.2$ in Durett.
+\end{proof}
+Going back to the master equation, we have
+\[
+\frac{N(k,t)}{t} = 2\frac{g_{k+1}}{k+1}, g_k(t) = \frac{(k-1)}{2t}N(k-1,t)
+\]
+Induct over $k$ starting from $N(1,t) = ct/(b+1)$ now to get all values.
+\end{proof}

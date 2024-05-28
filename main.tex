@@ -1,0 +1,93 @@
+\documentclass[a4paper]{report}
+% \usepackage{bbold}
+\usepackage[a4paper, total={6in, 10in}]{geometry}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,
+  citecolor=violet,
+  linkcolor=red,
+  urlcolor=blue}
+\input{./preamble.tex}
+% \usepackage{cmbright}
+\usepackage{epigraph}
+\usepackage{faktor}
+\usepackage{def}
+\usepackage{pgffor}
+\newcommand{\ov}[1]{\overline{#1}}
+\makeatletter
+\DeclareRobustCommand*{\mfaktor}[3][]
+{
+   { \mathpalette{\mfaktor@impl@}{{#1}{#2}{#3}} }
+}
+\newcommand*{\mfaktor@impl@}[2]{\mfaktor@impl#1#2}
+\newcommand*{\mfaktor@impl}[4]{
+   \settoheight{\faktor@zaehlerhoehe}{\ensuremath{#1#2{#3}}}%
+   \settoheight{\faktor@nennerhoehe}{\ensuremath{#1#2{#4}}}%
+      \raisebox{-0.5\faktor@zaehlerhoehe}{\ensuremath{#1#2{#3}}}%
+      \mkern-4mu\diagdown\mkern-5mu%
+      \raisebox{0.5\faktor@nennerhoehe}{\ensuremath{#1#2{#4}}}%
+}
+\makeatother
+
+\DeclareMathOperator{\Ker}{ker}
+\DeclareMathOperator{\im}{Im}
+
+\title{Information Theory and Coding}
+\tikzset{node distance=2.5cm, % Minimum distance between two nodes. Change if necessary.
+         every state/.style={ % Sets the properties for each state
+           semithick,
+           fill=gray!10},
+         initial text={},     % No label on start arrow
+         double distance=4pt, % Adjust appearance of accept states
+         every edge/.style={  % Sets the properties for each transition
+         draw,
+           ->,>=stealth',     % Makes edges directed with bold arrowheads
+           auto,
+           semithick}}
+           
+\usepackage{afterpage}
+\usetikzlibrary{fadings}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}          
+\begin{document}
+\DeclareFixedFont{\titlefont}{T1}{ppl}{b}{}{0.7in}
+\DeclareFixedFont{\subtitlefont}{T1}{ppl}{b}{}{0.4in}
+\afterpage{\restoregeometry}
+\newgeometry{left=1in, right=1in,top=1in, bottom=0in}
+\definecolor{mytan}{HTML}{F6D5A8}
+\pagecolor{mytan}\afterpage{\nopagecolor}
+
+\thispagestyle{empty}
+\begin{flushright}
+\titlefont Advanced Concentration Inequalities\\
+\subtitlefont IIT Bombay, Spring 2023\\
+\vspace{2cm}
+\subtitlefont Taught by: Prof. Sharayu Moharir \\
+\subtitlefont Scribed by: Eeshaan Jain
+\end{flushright}
+\vfill
+\begin{center}
+\begin{tikzpicture}
+
+\node[scope fading=north, inner sep=0pt, outer sep=0pt]{
+ \makebox[\textwidth]{\includegraphics[width=\paperwidth]{wave.jpg}}
+};
+\end{tikzpicture}
+\end{center}
+\newgeometry{left=1.15in, right=1.15in,top=0.85in, bottom=0.85in}
+    \tableofcontents
+    % start lessons
+    \foreach \lecno in {1,2,...,20}{%
+    % \foreach \lecno in {13,...,20}{%
+        \edef\FileName{lectures/lecture\lecno}
+        \IfFileExists{\FileName}{%
+            \par
+            \input{\FileName}
+        }
+        
+    }
+\bibliography{ref}
+    
+    %\input{lectures/lecture1.tex}
+    % end lessons
+\end{document}

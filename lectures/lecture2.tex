@@ -1,0 +1,111 @@
+\chapter{Building on Lecture 1}
+\section{Chernoff Bounds for Bernoulli and Binomial random variables}
+We know that if $Z$ is a sum of $n$ i.i.d. random variables, then $\PP(Z > n\alpha) \leq e^{-n\psi_{X_1}^*(\alpha)}$. Considering the average, $Z' = \frac{Z}{n}$, we get
+\[
+\PP\left( Z' > \alpha\right) \leq e^{-n\psi_{X_1}^*(\alpha)}
+\]
+\begin{eg}
+Consider $n$ i.i.d. Bernoulli random variables $\{X_i\}$, each $\sim \text{Bern}(p)$. Then, we know that for each $X_i$, $\psi_{X_i}^*(\alpha) = \kl{\text{Bern}(\alpha)}{\text{Bern}(p)}$. For $Z = \sum_i X_i$, we can write, 
+\[
+\PP(Z > n \alpha) \leq e^{-n  \kl{\text{Bern}(\alpha)}{\text{Bern}(p)}}
+\]
+\end{eg}
+In layman's terms, the probability of $n$ i.i.d. random variables \textit{misbehaving} is signficiantly lower than a single random variable.
+\begin{theorem}[Chernoff Bound for sum of independent Bernoulli random variables] Let $Z = \sum_{i=1}^n X_i$ where $X_i \sim \text{Bern}(p_i)$ are independent. Then, 
+\begin{equation}
+\PP(Z > n\alpha) \leq e^{-n  \kl{\text{Bern}(\alpha)}{\text{Bern}(\overline{p})}} \quad \text{where $\overline p = \frac{\sum_i p_i}{n}$}
+\end{equation}
+\end{theorem}
+\begin{proof}
+The above is equivalent to showing that $\EE[e^{sZ}] \leq \EE[e^{sX}]^n$ where $X \sim \text{Bern}(\overline p)$. \\
+Let $q_i = 1-p_i$. We have,
+\begin{align*}
+    \EE[e^{sZ}] &= \prod_{i=1}^n \EE[e^{sX_i}] = \prod_{i=1}^n (p_i e^s + q_i) \\
+    &\stackrel{*}{\leq} \left(\frac{\sum_{i=1}^n p_i e^s + q_i}{n}\right)^n = (\overline{p}e^s + \overline{q})^n
+\end{align*}
+Here, $(*)$ follows from the AM-GM inequality.
+\end{proof}
+Note that though we have a Chernoff bound for Binomial random variable, it is often less usable due to the $\kl{\cdot}\cdot$ term, and we would like simpler upper bounds.
+\begin{theorem}[Modified Chernoff Bounds for Binomial random variables]
+Let $X_i \sim \text{Bern}(p)$ be i.i.d. random variables, and $Z = \sum_{i=1}^n X_i$. Then,
+\begin{enumerate}[label=(\roman*)]
+    \item $\forall t > 0$,
+    \begin{equation}\label{eq:binomial-chernoff-form1}
+         \PP[Z > \EE[Z] + t] \leq e^{-2t^2/n}
+    \end{equation}
+    \item For $0 < \epsilon < 1$,
+    \begin{align}\label{eq:binomial-chernoff-form2}
+         \PP[Z > (1+\epsilon)\EE[Z]] &\leq e^{-\frac{\epsilon^2}{3} \EE[Z]} \\ 
+         \PP[Z < (1-\epsilon)\EE[Z]] &\leq e^{-\frac{\epsilon^2}{2} \EE[Z]}
+    \end{align}
+    \item For $0 < \delta < 1$ and $\mu = \EE[Z]$,
+    \begin{align}\label{eq:binomial-chernoff-form3}
+         \PP[Z \geq (1+\delta)\mu] &\leq \left(\frac{e^\delta}{(1+\delta)^{(1+\delta)}}\right)^\mu \\ 
+         \PP[Z \leq (1-\delta)\mu &\leq \left(\frac{e^{-\delta}}{(1-\delta)^{(1-\delta)}}\right)^\mu 
+    \end{align}
+    \item If $\mu_L \leq \mu \leq \mu_H$, $\forall t > 0$
+    \begin{equation}\label{eq:binomial-chernoff-form4}
+        \PP(Z > \mu_H + t) = \PP(Z < \mu_L - t) \leq e^{-2t^2/n}
+    \end{equation}
+    \item If $\mu_L \leq \mu \leq \mu_H$, $\forall 0 < \epsilon < 1$,
+    \begin{align}\label{eq:binomial-chernoff-form5}
+        \PP[Z > (1+\epsilon) \mu_H] &\leq e^{-\frac{\epsilon^2}{3} \mu_H} \\ 
+         \PP[Z < (1-\epsilon)\mu_L] &\leq e^{-\frac{\epsilon^2}{2} \mu_L}
+    \end{align}
+\end{enumerate}
+\end{theorem}
+\begin{proof} We prove each part separately.
+\begin{enumerate}[label=(\roman*)]
+    \item Consider $f(w) = (p+w)\log\frac{p+w}{p} + (q-w)\log\frac{q-w}{q}$ for $p+q=1$. Considering $t = wn$, we have $\PP[Z > \EE[Z] + t] \leq e^{-n f(w)}$. We know that for $\xi \in (0,w)$, 
+    \[ 
+    f(w) = f(0) + f'(0)w + f''(\xi)\frac{w^2}{2!}
+    \]
+    It is easy to check that $f(0) = f'(0) = 0$, and $f(w) = f''(\xi) \frac{w^2}{2}$ where $f''(\xi) = \frac{1}{(p+\xi)(q-\xi)}$. We can see that $f''(\xi) \geq 4$ (since through construction: $p+w \leq 1$ and $\xi < w$). This gives us $f(w) \geq 2w^2$. Substituting that back, we get 
+    \[
+    \PP[Z > \EE[Z] + t] \leq e^{-2t^2/n}
+    \]
+    \item 
+\end{enumerate}
+\end{proof}
+\section{Examples}
+\begin{eg}
+Consider a randomized algorithm $\Acal$, which on input $x$ outputs $f(x) \in \{a,b\}$. We know that $\Acal$ outputs the right answer w.p. $p \geq 3/4$ on each trial independent of everything else. We want to design an algorithm $\Acal_S$ which predicts the correct output w.p. $\geq 1-\delta$. \\ 
+To do so, the idea is to run $\Acal$ multiple times, say $n_\delta$, and output the majority result. Let
+\[
+X_i = \begin{cases}
+    1 &\text{if $\Acal$ is correct on the $i^{\text{th}}$ iteration} \\
+    0 &\text{else}
+\end{cases}
+\]
+Let $Z = \sum_{i=1}^{n_\delta} X_i \implies \EE[Z] \geq 3n_\delta/4$. $Z$ essentially tells us the number of correct outputs. Thus, $\PP(\Acal \text{ makes a mistake}) = \PP(Z < n_\delta/2)$. Using Equation~\ref{eq:binomial-chernoff-form1}, we write
+\begin{align*}
+    \PP\left(Z < \frac{3n_\delta}{4} - \frac{n_\delta}{4}\right) &\leq e^{-\frac{2 n_\delta^2}{n_\delta \cdot 16}} = e^{-n_\delta/8} \\ 
+    \PP(\Acal \text{ makes a mistake}) < \delta \implies n_\delta &\geq 8\log\frac{1}{\delta}
+\end{align*}
+\end{eg}
+\begin{eg}
+We consider the bins and balls scenario. There are $n$ balls and $n$ bins, and each ball is thrown into a bin chosen uniformly at random. Our task is to find the tightest $c$ such that
+\[
+\lim_{n\to\infty} \PP[\text{max \texttt{\#} balls in a bin} \geq c] = 0
+\]
+Such a problem is often of interest in networks, where we don't care about the state of the data server, but want to avoid a crash situation. For a specific bin, we denote,
+\[
+X_i = \begin{cases}
+    1 &\text{if ball $i$ goes into the bin} \\
+    0 &\text{else}
+\end{cases}
+\]
+We know that $X_i \sim \text{Bern}(1/n)$. Using Equation~\ref{eq:binomial-chernoff-form3}, and noting that if $Z = \sum_{i=1}^n X_i$, $\EE[Z] = 1$,
+\[
+\PP[Z \geq 1 + \epsilon] \leq \frac{e^\epsilon}{(1+\epsilon)^{(1+\epsilon)}}
+\]
+Now, let $\Ecal_i$ denote the event that bin $i$ receives more than $c$ balls. The union bound tells us that $\PP\left(\bigcup_{i=1}^n \Ecal_i\right) \leq \sum_{i=1}^n \PP(\Ecal_i)$. Now, the event \textit{max \texttt{\#} balls in a bin $\geq c$} is the same as $\bigcup_{i=1}^n \Ecal_i$. Thus, we can write,
+\[
+\PP[\text{max \texttt{\#} balls in a bin} \geq c] \leq n \PP[\text{\texttt{\#} balls in bin $1 \geq c$}]
+\]
+Setting $1+\epsilon = c$, we get
+\begin{align*}
+    \PP[\text{max \texttt{\#} balls in a bin} \geq c] \leq \frac{ne^{c-1}}{c^c}
+\end{align*}
+It is further seen (\textit{not proven here}), that $c = \Ocal\left(\log n/ \log \log n\right)$.
+\end{eg}
